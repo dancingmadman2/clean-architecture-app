@@ -12,7 +12,7 @@ data class MovieDetail(
     val genres: List<Genre>,
     val id: Int,
     val originCountry: List<String>,
-    val originalLanguages: String,
+    val originalLanguage: String,
     val originalTitle: String,
     val overview: String,
     val popularity: Double,

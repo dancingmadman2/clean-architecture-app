@@ -1,5 +1,6 @@
 package com.example.myapplication.presentation.movie_detail
 
+import android.util.Log
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -20,15 +21,25 @@ class MovieDetailViewModel @Inject constructor(
     savedStateHandle: SavedStateHandle
 ) : ViewModel() {
 
+
     private val _state = mutableStateOf(MovieDetailState())
     val state: State<MovieDetailState> = _state
-
+    init {
+        val movieIdString = savedStateHandle.get<String>(Constants.MOVIE_ID)
+        movieIdString?.toIntOrNull()?.let { movieId ->
+            Log.d("MOVIE_ID","Movie Id: $movieId")
+            getMovieDetail(movieId)
+        }
+    }
+/*
     init {
         savedStateHandle.get<Int>(Constants.MOVIE_ID)?.let { movieId ->
             getMovieDetail(movieId)
         }
     }
 
+
+ */
     private fun getMovieDetail(movieId: Int) {
         getMovieDetailUseCase(movieId).onEach { result ->
             when (result) {

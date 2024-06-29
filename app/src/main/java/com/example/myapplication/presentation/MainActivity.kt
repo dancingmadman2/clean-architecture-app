@@ -15,6 +15,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.myapplication.common.Constants
 import com.example.myapplication.domain.model.Movie
 import com.example.myapplication.presentation.movie_detail.MovieDetailScreen
 //import com.example.myapplication.presentation.movie_detail.MovieDetailScreen
@@ -42,8 +43,9 @@ class MainActivity : ComponentActivity() {
                             MovieListScreen(navController)
                         }
                         composable(
-                            route = Screen.MovieDetailScreen.route + "/{movieId}"
+                            route = Screen.MovieDetailScreen.route + "/{${Constants.MOVIE_ID}}"
                         ) {
+
                             MovieDetailScreen()
                         }
                     }

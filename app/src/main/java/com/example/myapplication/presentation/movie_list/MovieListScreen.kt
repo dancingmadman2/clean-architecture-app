@@ -38,8 +38,9 @@ fun MovieListScreen(
                 MovieListItem(
                     movie  = movie,
                     onItemClick = {
-                    //    Log.d("MOVIE_ID","${movie.id}")
+
                         navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+
                     }
                 )
             }
