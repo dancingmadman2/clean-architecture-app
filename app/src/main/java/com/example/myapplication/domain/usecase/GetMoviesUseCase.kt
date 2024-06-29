@@ -3,7 +3,6 @@ package com.example.myapplication.domain.usecase
 import android.annotation.SuppressLint
 import android.net.http.HttpException
 import com.example.myapplication.common.Resource
-import com.example.myapplication.data.remote.dto.movie.MovieResponse
 import com.example.myapplication.data.remote.dto.movie.toMovie
 import com.example.myapplication.domain.model.Movie
 import com.example.myapplication.domain.repository.MovieRepository

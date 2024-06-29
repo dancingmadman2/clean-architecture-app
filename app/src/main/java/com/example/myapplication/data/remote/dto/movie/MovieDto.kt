@@ -4,7 +4,7 @@ package com.example.myapplication.data.remote.dto.movie
 import com.example.myapplication.domain.model.Movie
 import com.google.gson.annotations.SerializedName
 
-data class MovieResponse(
+data class MoviesResponse(
     val page: Int,
     val results: List<MovieDto>,
     @SerializedName("total_pages")
@@ -21,6 +21,8 @@ data class MovieDto(
     val genreIds: List<Int>,
     val id: Int,
     @SerializedName("original_title")
+    val originalTitle: String,
+    @SerializedName("original_language")
     val originalLanguage: String,
     val overview: String,
     val popularity: Double,
@@ -35,6 +37,7 @@ data class MovieDto(
     @SerializedName("vote_count")
     val voteCount: Int
 )
+
 fun MovieDto.toMovie(): Movie {
 
     return Movie(

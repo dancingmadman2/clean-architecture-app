@@ -22,7 +22,7 @@ object AppModule {
     @Singleton
     fun provideOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.BODY // Log the entire response body
+            level = HttpLoggingInterceptor.Level.BODY
         }
         return OkHttpClient.Builder().addInterceptor(loggingInterceptor)
             .build()
@@ -34,7 +34,7 @@ object AppModule {
         return Retrofit.Builder()
             .baseUrl(Constants.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
-            .client(okHttpClient) // Use the OkHttpClient with the logging interceptor
+            .client(okHttpClient)
             .build()
             .create(MovieApi::class.java)
     }
