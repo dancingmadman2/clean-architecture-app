@@ -1,5 +1,5 @@
+package com.example.myapplication.presentation.movie_detail
 
-/*
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.SavedStateHandle
@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.common.Constants
 import com.example.myapplication.common.Resource
-import com.example.myapplication.presentation.movie_detail.MovieDetailState
-import com.example.myapplications.domain.usecase.GetMovieDetailUseCase
+
+import com.example.myapplication.domain.usecase.GetMovieDetailUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -48,4 +48,3 @@ class MovieDetailViewModel @Inject constructor(
     }
 }
 
-*/

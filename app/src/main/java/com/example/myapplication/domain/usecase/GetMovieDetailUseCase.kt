@@ -1,4 +1,4 @@
-package com.example.myapplications.domain.usecase
+package com.example.myapplication.domain.usecase
 
 import android.annotation.SuppressLint
 import android.net.http.HttpException

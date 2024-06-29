@@ -1,3 +1,4 @@
+import android.util.Log
 import com.example.myapplication.presentation.movie_list.MovieListViewModel
 
 
@@ -18,6 +19,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.example.myapplication.presentation.Screen
 import com.example.myapplication.presentation.movie_list.components.MovieListItem
 
 
@@ -36,7 +38,8 @@ fun MovieListScreen(
                 MovieListItem(
                     movie  = movie,
                     onItemClick = {
-
+                    //    Log.d("MOVIE_ID","${movie.id}")
+                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
                     }
                 )
             }

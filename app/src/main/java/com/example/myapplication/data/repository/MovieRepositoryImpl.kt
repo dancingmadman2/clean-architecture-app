@@ -2,6 +2,7 @@
 import com.example.myapplication.data.remote.MovieApi
 import com.example.myapplication.data.remote.dto.movie_detail.MovieDetailDto
 import com.example.myapplication.data.remote.dto.movie.MovieDto
+import com.example.myapplication.data.remote.dto.movie_detail.toMovieDetail
 import com.example.myapplication.domain.repository.MovieRepository
 import javax.inject.Inject
 
