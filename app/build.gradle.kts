@@ -11,7 +11,7 @@ plugins {
 
 
 android {
-    namespace = "com.example.myapplication"
+    namespace = "com.example.movieTracker"
     compileSdk = 34
 
     val localProperties = Properties()
