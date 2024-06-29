@@ -1,12 +1,17 @@
+import androidx.compose.foundation.ExperimentalFoundationApi
 import com.example.movieTracker.presentation.movie_list.MovieListViewModel
 
 
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -22,6 +27,7 @@ import com.example.movieTracker.presentation.Screen
 import com.example.movieTracker.presentation.movie_list.components.MovieListItem
 
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MovieListScreen(
     navController: NavController,
@@ -29,19 +35,28 @@ fun MovieListScreen(
 ){
     val state = viewModel.state.value
 
+
     Box(modifier = Modifier.fillMaxSize()){
 
-        LazyColumn (modifier = Modifier.fillMaxSize()) {
+       LazyVerticalGrid(
+                columns = GridCells.Fixed(3), // Number of columns in the grid
+        contentPadding = PaddingValues(16.dp),
+        modifier = Modifier.fillMaxSize()
+        )  {
 
-            items(state.movies){movie->
-                MovieListItem(
-                    movie  = movie,
-                    onItemClick = {
+            items(state.movies.size){index->
+                val movie =state.movies[index]
 
-                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                    MovieListItem(
+                        movie  = movie,
+                        onItemClick = {
 
-                    }
-                )
+                            navController.navigate(Screen.MovieDetailScreen.route + "/${movie.  id}")
+
+                        }
+                    )
+
+
             }
 
 
