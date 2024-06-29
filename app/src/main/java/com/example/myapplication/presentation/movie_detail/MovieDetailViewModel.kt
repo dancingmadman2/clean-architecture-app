@@ -1,3 +1,4 @@
+
 /*
 import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
@@ -16,27 +17,28 @@ import javax.inject.Inject
 @HiltViewModel
 class MovieDetailViewModel @Inject constructor(
     private val getMovieDetailUseCase: GetMovieDetailUseCase,
-    private val savedStateHandle: SavedStateHandle
-): ViewModel() {
+    savedStateHandle: SavedStateHandle
+) : ViewModel() {
 
     private val _state = mutableStateOf(MovieDetailState())
     val state: State<MovieDetailState> = _state
 
     init {
-        savedStateHandle.get<Int>(Constants.MOVIE_ID)?.let { movieId->
+        savedStateHandle.get<Int>(Constants.MOVIE_ID)?.let { movieId ->
             getMovieDetail(movieId)
         }
     }
 
-    private fun getMovieDetail(movieId: Int){
-
+    private fun getMovieDetail(movieId: Int) {
         getMovieDetailUseCase(movieId).onEach { result ->
-            when(result){
+            when (result) {
                 is Resource.Success -> {
                     _state.value = MovieDetailState(movie = result.data)
                 }
                 is Resource.Error -> {
-                    _state.value = MovieDetailState(error = result.message ?: "Unexpected error has occured.")
+                    _state.value = MovieDetailState(
+                        error = result.message ?: "An unexpected error occured"
+                    )
                 }
                 is Resource.Loading -> {
                     _state.value = MovieDetailState(isLoading = true)
@@ -44,9 +46,6 @@ class MovieDetailViewModel @Inject constructor(
             }
         }.launchIn(viewModelScope)
     }
-
-
 }
 
-
- */
+*/
