@@ -5,15 +5,20 @@ import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
@@ -33,11 +38,17 @@ fun MovieListItem(
         val imageUrl = "https://image.tmdb.org/t/p/w185${movie.posterPath}"
         Log.d("MovieListItem", "Image URL: $imageUrl")
 
-        Box (modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))){
+        Box(
+            modifier = Modifier
+                .clip(shape = RoundedCornerShape(14.dp))
+                .fillMaxSize()
+        ){
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Movie Poster",
-                modifier = Modifier.scale(1.15F)
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .scale(1.15f)
                     .height(200.dp)
             )
         }

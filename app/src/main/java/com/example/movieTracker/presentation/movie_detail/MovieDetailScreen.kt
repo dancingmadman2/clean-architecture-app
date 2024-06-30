@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AttachMoney
 import androidx.compose.material.icons.filled.DateRange
@@ -61,10 +63,10 @@ fun MovieDetailScreen(
     val movie = state.movie
     val credits = creditsViewModel.state.value.movieCredits
 
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box() {
 
 
-        Column() {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             TopBar(
                 title = "${movie?.title}",
 
@@ -76,19 +78,21 @@ fun MovieDetailScreen(
 
 
             Row(Modifier.padding(16.dp)) {
-                Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
+                Box(modifier = Modifier
+                    .clip(shape = RoundedCornerShape(18.dp))
+                    .weight(0.8f) ) {
                     val imageUrl =
                         "https://image.tmdb.org/t/p/w185${movie?.posterPath}"
                     AsyncImage(
                         model = imageUrl,
                         contentDescription = "Movie Poster",
                         modifier = Modifier
-                            .scale(1.15F)
-                            .height(300.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(0.665f)
                     )
                 }
                 Spacer(modifier = Modifier.width(24.dp))
-                Column {
+                Column(modifier = Modifier.weight(0.8f)) {
                     Text(
                         text = "${movie?.title}",
                         style = TextStyle(
@@ -103,21 +107,27 @@ fun MovieDetailScreen(
 
                     Spacer(modifier = Modifier.height(12.dp))
 
-                    Text(
-                        text = "Overview",
-                        style = TextStyle(fontWeight = FontWeight.Bold)
-                    )
-                    Spacer(modifier = Modifier.height(4.dp))
-                    Text(
-                        text = "${movie?.overview}",
-                        overflow = TextOverflow.Ellipsis,
-                        style = TextStyle(
-                            fontSize = 12.sp
-                        )
-                    )
+
 
                 }
             }
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ){
+                Text(
+                    text = "Overview",
+                    style = TextStyle(fontWeight = FontWeight.Bold)
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = "${movie?.overview}",
+                    overflow = TextOverflow.Ellipsis,
+                    style = TextStyle(
+                        fontSize = 12.sp
+                    )
+                )
+            }
+
 
             Box(modifier = Modifier.padding(start = 16.dp)) {
                 Row(
@@ -139,7 +149,7 @@ fun MovieDetailScreen(
                             Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
                                 if (credits?.crew?.get(0)?.profilePath != null) {
                                     val imageUrl =
-                                        "https://image.tmdb.org/t/p/w185${credits.crew.get(0).profilePath}"
+                                        "https://image.tmdb.org/t/p/w185${credits.crew[0].profilePath}"
                                     AsyncImage(
                                         model = imageUrl,
                                         contentDescription = "Movie Poster",
@@ -196,7 +206,7 @@ fun MovieDetailScreen(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Box(modifier = Modifier.padding(start = 16.dp)) {
 
@@ -210,10 +220,9 @@ fun MovieDetailScreen(
                     )
                     Spacer(modifier = Modifier.height(12.dp))
 
-
-
                     LazyVerticalGrid(
                         columns = GridCells.Fixed(3),
+                        modifier = Modifier.height(500.dp)
                     ) {
                         var size = credits?.cast?.size ?: 0
                         if (size > 6) {
@@ -257,12 +266,15 @@ fun MovieDetailScreen(
                         }
 
                     }
-
                 }
 
-            }
 
+
+
+
+            }
         }
+
 
         if (state.isLoading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
