@@ -3,22 +3,23 @@ package com.example.movieTracker.domain.usecase
 import android.annotation.SuppressLint
 import android.net.http.HttpException
 import com.example.movieTracker.common.Resource
-import com.example.movieTracker.data.remote.dto.movie_detail.overview.toMovieDetail
-import com.example.movieTracker.domain.model.MovieDetail
+import com.example.movieTracker.data.remote.dto.movie_detail.credits.toMovieCredits
+import com.example.movieTracker.domain.model.MovieCredits
 import com.example.movieTracker.domain.repository.MovieRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
 import javax.inject.Inject
 
-class GetMovieDetailUseCase @Inject constructor(
+
+class GetMovieCreditsUseCase @Inject constructor(
     private val repository: MovieRepository
 ) {
-    operator fun invoke(movieId: Int): Flow<Resource<MovieDetail>> = flow {
+    operator fun invoke(movieId: Int): Flow<Resource<MovieCredits>> = flow {
         try {
             emit(Resource.Loading())
-            val movieDetail = repository.getMovieDetail(movieId).toMovieDetail()
-            emit(Resource.Success(movieDetail))
+            val movieCredits = repository.getMovieCredits(movieId).toMovieCredits()
+            emit(Resource.Success(movieCredits))
         } catch (@SuppressLint("NewApi") e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "Errormania occured."))
         } catch (e: IOException) {

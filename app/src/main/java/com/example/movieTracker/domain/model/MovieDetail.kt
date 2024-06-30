@@ -1,13 +1,15 @@
 package com.example.movieTracker.domain.model
 
-import com.example.movieTracker.data.remote.dto.movie_detail.Genre
-import com.example.movieTracker.data.remote.dto.movie_detail.ProductionCompany
-import com.example.movieTracker.data.remote.dto.movie_detail.ProductionCountry
+import com.example.movieTracker.data.remote.dto.movie_detail.overview.BelongsToCollection
+import com.example.movieTracker.data.remote.dto.movie_detail.overview.Genre
+import com.example.movieTracker.data.remote.dto.movie_detail.overview.ProductionCompany
+import com.example.movieTracker.data.remote.dto.movie_detail.overview.ProductionCountry
 
 
 data class MovieDetail(
     val adult: Boolean,
     val backdropPath: String,
+    val belongsToCollection: BelongsToCollection?,
     val budget: Int,
     val genres: List<Genre>,
     val id: Int,

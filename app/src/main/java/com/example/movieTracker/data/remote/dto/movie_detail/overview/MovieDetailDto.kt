@@ -1,4 +1,4 @@
-package com.example.movieTracker.data.remote.dto.movie_detail
+package com.example.movieTracker.data.remote.dto.movie_detail.overview
 
 
 import com.example.movieTracker.domain.model.MovieDetail
@@ -11,7 +11,7 @@ data class MovieDetailDto(
     @SerializedName("backdrop_path")
     val backdropPath: String,
     @SerializedName("belongs_to_collection")
-    val belongsToCollection: BelongsToCollection,
+    val belongsToCollection: BelongsToCollection?,
     @SerializedName("budget")
     val budget: Int,
     @SerializedName("genres")
@@ -63,9 +63,10 @@ data class MovieDetailDto(
 fun MovieDetailDto.toMovieDetail(): MovieDetail {
 
     return MovieDetail(
-        id= id,
+        id = id,
         adult = adult,
         budget = budget,
+        belongsToCollection = belongsToCollection,
         genres = genres,
         originCountry = originCountry,
         originalLanguage = originalLanguage,
@@ -75,7 +76,7 @@ fun MovieDetailDto.toMovieDetail(): MovieDetail {
         productionCompanies = productionCompanies,
         productionCountries = productionCountries,
         revenue = revenue,
-        runtime =  runtime,
+        runtime = runtime,
         status = status,
         tagline = tagline,
         title = title,
@@ -84,7 +85,6 @@ fun MovieDetailDto.toMovieDetail(): MovieDetail {
         backdropPath = backdropPath,
         originalTitle = originalTitle,
         releaseDate = releaseDate
-
 
 
     )
