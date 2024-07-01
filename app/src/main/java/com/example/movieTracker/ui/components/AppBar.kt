@@ -15,9 +15,14 @@ import androidx.navigation.NavController
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TopBar(title: String, showBackButton: Boolean = true, navController: NavController?) {
-
+fun TopBar(
+    title: String,
+    showBackButton: Boolean = true,
+    navController: NavController?,
+) {
+    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     TopAppBar(
+
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
@@ -27,7 +32,7 @@ fun TopBar(title: String, showBackButton: Boolean = true, navController: NavCont
 
         },
 
-
+        scrollBehavior = scrollBehavior,
         navigationIcon = {
             if (showBackButton) {
                 IconButton(onClick = {

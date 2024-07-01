@@ -26,8 +26,10 @@ import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -52,6 +54,7 @@ import com.example.movieTracker.presentation.movie_credits.MovieCreditsViewModel
 import com.example.movieTracker.ui.components.TopBar
 
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(
     navController: NavController,
@@ -62,181 +65,110 @@ fun MovieDetailScreen(
     val state = viewModel.state.value
     val movie = state.movie
     val credits = creditsViewModel.state.value.movieCredits
-
-    Box() {
-
-
-        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Scaffold(
+        topBar = {
             TopBar(
                 title = "${movie?.title}",
 
                 navController = navController
             )
-            Spacer(modifier = Modifier.height(20.dp))
+        }
+
+    ) { innerPadding ->
+        Box(modifier = Modifier.fillMaxSize()) {
 
 
-
-
-            Row(Modifier.padding(16.dp)) {
-                Box(modifier = Modifier
-                    .clip(shape = RoundedCornerShape(18.dp))
-                    .weight(0.8f) ) {
-                    val imageUrl =
-                        "https://image.tmdb.org/t/p/w185${movie?.posterPath}"
-                    AsyncImage(
-                        model = imageUrl,
-                        contentDescription = "Movie Poster",
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .aspectRatio(0.665f)
-                    )
-                }
-                Spacer(modifier = Modifier.width(24.dp))
-                Column(modifier = Modifier.weight(0.8f)) {
-                    Text(
-                        text = "${movie?.title}",
-                        style = TextStyle(
-                            fontSize = 24.sp,
-                        ),
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Details("Release Date: ", "${movie?.releaseDate}", Icons.Filled.DateRange)
-                    Details("Genre: ", "${movie?.genres?.get(0)?.name}", Icons.Filled.Info)
-                    Details("Runtime : ", "${movie?.runtime} min.", Icons.Filled.Timelapse)
-
-                    Spacer(modifier = Modifier.height(12.dp))
-
-
-
-                }
-            }
             Column(
-                modifier = Modifier.padding(16.dp)
-            ){
-                Text(
-                    text = "Overview",
-                    style = TextStyle(fontWeight = FontWeight.Bold)
-                )
-                Spacer(modifier = Modifier.height(4.dp))
-                Text(
-                    text = "${movie?.overview}",
-                    overflow = TextOverflow.Ellipsis,
-                    style = TextStyle(
-                        fontSize = 12.sp
+                modifier = Modifier
+                    .verticalScroll(
+                        rememberScrollState()
+
                     )
-                )
-            }
+                    .padding(innerPadding)
+            ) {
+
+                Spacer(modifier = Modifier.height(20.dp))
 
 
-            Box(modifier = Modifier.padding(start = 16.dp)) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    Column {
+
+
+                Row(Modifier.padding(16.dp)) {
+                    Box(
+                        modifier = Modifier
+                            .clip(shape = RoundedCornerShape(6.dp))
+                            .weight(0.8f)
+                    ) {
+                        val imageUrl =
+                            "https://image.tmdb.org/t/p/w185${movie?.posterPath}"
+                        AsyncImage(
+                            model = imageUrl,
+                            contentDescription = "Movie Poster",
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .aspectRatio(0.665f)
+                        )
+                    }
+                    Spacer(modifier = Modifier.width(24.dp))
+                    Column(modifier = Modifier.weight(0.8f)) {
                         Text(
-                            text = "Director",
+                            text = "${movie?.title}",
                             style = TextStyle(
                                 fontSize = 24.sp,
-                                fontWeight = FontWeight.Bold
-                            )
+                            ),
+                            overflow = TextOverflow.Ellipsis
                         )
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Details("Release Date: ", "${movie?.releaseDate}", Icons.Filled.DateRange)
+                        Details("Genre: ", "${movie?.genres?.get(0)?.name}", Icons.Filled.Info)
+                        Details("Runtime : ", "${movie?.runtime} min.", Icons.Filled.Timelapse)
 
                         Spacer(modifier = Modifier.height(12.dp))
-                        Column {
 
-                            Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
-                                if (credits?.crew?.get(0)?.profilePath != null) {
-                                    val imageUrl =
-                                        "https://image.tmdb.org/t/p/w185${credits.crew[0].profilePath}"
-                                    AsyncImage(
-                                        model = imageUrl,
-                                        contentDescription = "Movie Poster",
-                                        modifier = Modifier
-                                            .scale(1.15F)
-                                            .height(150.dp)
-                                    )
-                                } else {
-                                    Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
-                                        Icon(
-                                            imageVector = Icons.Filled.Person,
-                                            contentDescription = "",
-                                            modifier = Modifier
-                                                .height(150.dp)
-                                                .scale(1.5F)
-                                                .aspectRatio(0.665F)
-                                        )
-                                    }
-                                }
 
-                            }
-
-                            Text(text = "${credits?.crew?.get(0)?.name}")
-                        }
-                    }
-
-                    Column(modifier = Modifier.padding(16.dp)) {
-
-                        Details(
-                            label = "Production: ",
-                            value = "${movie?.productionCompanies?.get(0)?.name}",
-                            icon = Icons.Filled.Movie
-                        )
-                        Details(
-                            label = "Budget: ",
-                            value = "${movie?.budget} $",
-                            icon = Icons.Filled.AttachMoney
-                        )
-                        Details(
-                            label = "Revenue: ",
-                            value = "${movie?.revenue} $",
-                            icon = Icons.Filled.AttachMoney
-                        )
-                        Details(
-                            label = "Popularity: ",
-                            value = "${movie?.popularity}",
-                            icon = Icons.Filled.People
-                        )
-                        Details(
-                            label = "Rating: ",
-                            value = "${movie?.voteAverage} / 10",
-                            icon = Icons.Filled.StarRate
-                        )
                     }
                 }
-            }
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Box(modifier = Modifier.padding(start = 16.dp)) {
-
-                Column {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
                     Text(
-                        text = "Cast",
+                        text = "Overview",
+
                         style = TextStyle(
-                            fontSize = 24.sp,
-                            fontWeight = FontWeight.Bold
+                            fontWeight = FontWeight.Bold, fontSize = 24.sp
                         )
                     )
-                    Spacer(modifier = Modifier.height(12.dp))
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = "${movie?.overview}",
+                        overflow = TextOverflow.Ellipsis,
+                        style = TextStyle(
+                            fontSize = 15.sp
+                        )
+                    )
+                }
 
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        modifier = Modifier.height(500.dp)
+
+                Box(modifier = Modifier.padding(start = 16.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        var size = credits?.cast?.size ?: 0
-                        if (size > 6) {
-                            size = 6
-                        }
-                        items(size) { index ->
-                            val cast = credits?.cast?.get(index)
+                        Column {
+                            Text(
+                                text = "Director",
+                                style = TextStyle(
+                                    fontSize = 24.sp,
+                                    fontWeight = FontWeight.Bold
+                                )
+                            )
 
+                            Spacer(modifier = Modifier.height(12.dp))
                             Column {
 
-                                Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
-                                    if (cast?.profilePath != null) {
+                                Box(modifier = Modifier.clip(shape = RoundedCornerShape(6.dp))) {
+                                    if (credits?.crew?.get(0)?.profilePath != null) {
                                         val imageUrl =
-                                            "https://image.tmdb.org/t/p/w185${cast.profilePath}"
+                                            "https://image.tmdb.org/t/p/w185${credits.crew[0].profilePath}"
                                         AsyncImage(
                                             model = imageUrl,
                                             contentDescription = "Movie Poster",
@@ -245,7 +177,7 @@ fun MovieDetailScreen(
                                                 .height(150.dp)
                                         )
                                     } else {
-                                        Box(modifier = Modifier.clip(shape = RoundedCornerShape(18.dp))) {
+                                        Box(modifier = Modifier.clip(shape = RoundedCornerShape(6.dp))) {
                                             Icon(
                                                 imageVector = Icons.Filled.Person,
                                                 contentDescription = "",
@@ -258,40 +190,131 @@ fun MovieDetailScreen(
                                     }
 
                                 }
-                                Text(text = "${cast?.name}")
-                                Spacer(modifier = Modifier.height(8.dp))
+
+                                Text(text = "${credits?.crew?.get(0)?.name}")
                             }
-
-
                         }
 
+                        Column(modifier = Modifier.padding(16.dp)) {
+
+                            Details(
+                                label = "Production: ",
+                                value = "${movie?.productionCompanies?.get(0)?.name}",
+                                icon = Icons.Filled.Movie
+                            )
+                            Details(
+                                label = "Budget: ",
+                                value = "${movie?.budget} $",
+                                icon = Icons.Filled.AttachMoney
+                            )
+                            Details(
+                                label = "Revenue: ",
+                                value = "${movie?.revenue} $",
+                                icon = Icons.Filled.AttachMoney
+                            )
+                            Details(
+                                label = "Popularity: ",
+                                value = "${movie?.popularity}",
+                                icon = Icons.Filled.People
+                            )
+                            Details(
+                                label = "Rating: ",
+                                value = "${movie?.voteAverage} / 10",
+                                icon = Icons.Filled.StarRate
+                            )
+                        }
                     }
                 }
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Box(modifier = Modifier.padding(start = 16.dp)) {
+
+                    Column {
+                        Text(
+                            text = "Cast",
+                            style = TextStyle(
+                                fontSize = 24.sp,
+                                fontWeight = FontWeight.Bold
+                            )
+                        )
+                        Spacer(modifier = Modifier.height(12.dp))
+
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            modifier = Modifier.height(500.dp)
+                        ) {
+                            var size = credits?.cast?.size ?: 0
+                            if (size > 6) {
+                                size = 6
+                            }
+                            items(size) { index ->
+                                val cast = credits?.cast?.get(index)
+
+                                Column {
+
+                                    Box(modifier = Modifier.clip(shape = RoundedCornerShape(6.dp))) {
+                                        if (cast?.profilePath != null) {
+                                            val imageUrl =
+                                                "https://image.tmdb.org/t/p/w185${cast.profilePath}"
+                                            AsyncImage(
+                                                model = imageUrl,
+                                                contentDescription = "Movie Poster",
+                                                modifier = Modifier
+                                                    .scale(1.15F)
+                                                    .height(150.dp)
+                                            )
+                                        } else {
+                                            Box(
+                                                modifier = Modifier.clip(
+                                                    shape = RoundedCornerShape(
+                                                        6.dp
+                                                    )
+                                                )
+                                            ) {
+                                                Icon(
+                                                    imageVector = Icons.Filled.Person,
+                                                    contentDescription = "",
+                                                    modifier = Modifier
+                                                        .height(150.dp)
+                                                        .scale(1.5F)
+                                                        .aspectRatio(0.665F)
+                                                )
+                                            }
+                                        }
+
+                                    }
+                                    Text(text = "${cast?.name}")
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                }
 
 
+                            }
+
+                        }
+                    }
 
 
-
+                }
             }
+
+
+            if (state.isLoading) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+            if (state.error.isNotBlank()) {
+                Text(
+                    text = state.error,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+                        .align(Alignment.Center)
+                )
+            }
+
+
         }
-
-
-        if (state.isLoading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-        if (state.error.isNotBlank()) {
-            Text(
-                text = state.error,
-                color = Color.Red,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.Center)
-            )
-        }
-
-
     }
 }
 
