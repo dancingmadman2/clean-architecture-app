@@ -1,8 +1,6 @@
 package com.example.movieTracker.presentation.movie_list
 
 import android.util.Log
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieTracker.common.Resource
@@ -19,6 +17,7 @@ import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
@@ -27,8 +26,8 @@ class MovieListViewModel @Inject constructor(
     private val getMoviesUseCase: GetMoviesUseCase
 ) : ViewModel() {
 
-    private val _state = mutableStateOf(MovieListState())
-    val state: State<MovieListState> = _state
+    private val _state = MutableStateFlow(MovieListState())
+    val state: StateFlow<MovieListState> = _state.asStateFlow()
 
     private val _searchText = MutableStateFlow("")
     val searchText: StateFlow<String> = _searchText.asStateFlow()
@@ -36,21 +35,22 @@ class MovieListViewModel @Inject constructor(
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
 
-    private val _movies = MutableStateFlow<List<Movie>>(emptyList())
+    // private val _movies = MutableStateFlow<List<Movie>>(emptyList())
+
     val movies: StateFlow<List<Movie>> = searchText
         .debounce(300L)
         .onEach {
             _isSearching.value = true
         }
-        .combine(_movies) { query, movies ->
+        .combine(state) { query, state ->
             if (query.isBlank()) {
-                movies
+                state.movies
             } else {
                 Log.d(
                     "query-movies",
-                    movies.filter { it.title.contains(query, ignoreCase = true) }.toString()
+                    state.movies.filter { it.title.contains(query, ignoreCase = true) }.toString()
                 )
-                movies.filter { it.title.contains(query, ignoreCase = true) }
+                state.movies.filter { it.title.contains(query, ignoreCase = true) }
             }
         }
         .onEach {
@@ -59,7 +59,7 @@ class MovieListViewModel @Inject constructor(
         .stateIn(
             viewModelScope,
             SharingStarted.WhileSubscribed(5000),
-            _movies.value
+            _state.value.movies
         )
 
     init {
@@ -77,17 +77,38 @@ class MovieListViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     val movies = result.data ?: emptyList()
-                    _state.value = MovieListState(movies = movies)
-                    _movies.value = movies
+                    _state.update {
+                        it.copy(
+                            isLoading = false,
+                            error = "",
+                            movies = movies
+                        )
+
+                    }
+//                    _movies.update { movies }
                 }
 
                 is Resource.Error -> {
-                    _state.value =
-                        MovieListState(error = result.message ?: "Unexpected error has occurred.")
+                    _state.update {
+                        it.copy(
+
+                            error = result.message ?: "Unexpected error has occurred.",
+                            isLoading = false,
+                        )
+                    }
+
                 }
 
                 is Resource.Loading -> {
-                    _state.value = MovieListState(isLoading = true)
+                    _state.update {
+                        it.copy(
+                            isLoading = true,
+                            error = "",
+                            movies = emptyList()
+
+                        )
+                    }
+
                 }
             }
         }.launchIn(viewModelScope)

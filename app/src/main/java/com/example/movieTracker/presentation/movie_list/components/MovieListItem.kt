@@ -24,6 +24,7 @@ fun MovieListItem(
     movie: Movie,
     onItemClick: (Movie) -> Unit
 ) {
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -44,7 +45,7 @@ fun MovieListItem(
                 contentDescription = "Movie Poster",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .scale(1.15f)
+                    .scale(1f)
                     .height(200.dp)
             )
         }

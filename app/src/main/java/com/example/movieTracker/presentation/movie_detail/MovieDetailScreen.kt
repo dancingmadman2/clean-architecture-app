@@ -32,6 +32,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +64,7 @@ fun MovieDetailScreen(
     creditsViewModel: MovieCreditsViewModel = hiltViewModel()
 ) {
 
-    val state = viewModel.state.value
+    val state by viewModel.state.collectAsState()
     val movie = state.movie
     val credits = creditsViewModel.state.value.movieCredits
     Scaffold(
@@ -121,6 +123,32 @@ fun MovieDetailScreen(
                         Details("Release Date: ", "${movie?.releaseDate}", Icons.Filled.DateRange)
                         Details("Genre: ", "${movie?.genres?.get(0)?.name}", Icons.Filled.Info)
                         Details("Runtime : ", "${movie?.runtime} min.", Icons.Filled.Timelapse)
+
+                        Details(
+                            label = "Production: ",
+                            value = "${movie?.productionCompanies?.get(0)?.name}",
+                            icon = Icons.Filled.Movie
+                        )
+                        Details(
+                            label = "Budget: ",
+                            value = "${movie?.budget} $",
+                            icon = Icons.Filled.AttachMoney
+                        )
+                        Details(
+                            label = "Revenue: ",
+                            value = "${movie?.revenue} $",
+                            icon = Icons.Filled.AttachMoney
+                        )
+                        Details(
+                            label = "Popularity: ",
+                            value = "${movie?.popularity}",
+                            icon = Icons.Filled.People
+                        )
+                        Details(
+                            label = "Rating: ",
+                            value = "${movie?.voteAverage} / 10",
+                            icon = Icons.Filled.StarRate
+                        )
 
                         Spacer(modifier = Modifier.height(12.dp))
 
@@ -195,34 +223,6 @@ fun MovieDetailScreen(
                             }
                         }
 
-                        Column(modifier = Modifier.padding(16.dp)) {
-
-                            Details(
-                                label = "Production: ",
-                                value = "${movie?.productionCompanies?.get(0)?.name}",
-                                icon = Icons.Filled.Movie
-                            )
-                            Details(
-                                label = "Budget: ",
-                                value = "${movie?.budget} $",
-                                icon = Icons.Filled.AttachMoney
-                            )
-                            Details(
-                                label = "Revenue: ",
-                                value = "${movie?.revenue} $",
-                                icon = Icons.Filled.AttachMoney
-                            )
-                            Details(
-                                label = "Popularity: ",
-                                value = "${movie?.popularity}",
-                                icon = Icons.Filled.People
-                            )
-                            Details(
-                                label = "Rating: ",
-                                value = "${movie?.voteAverage} / 10",
-                                icon = Icons.Filled.StarRate
-                            )
-                        }
                     }
                 }
                 Spacer(modifier = Modifier.height(16.dp))

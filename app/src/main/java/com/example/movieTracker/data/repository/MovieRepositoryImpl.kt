@@ -16,12 +16,10 @@ class MovieRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetailDto {
-        val response = api.getMovieDetail(movieId)
         return api.getMovieDetail(movieId)
     }
 
     override suspend fun getMovieCredits(movieId: Int): MovieCreditsDto {
-        val response = api.getMovieCredits(movieId)
         return api.getMovieCredits(movieId)
     }
 
