@@ -28,7 +28,8 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Timelapse
-import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -64,7 +65,6 @@ import com.example.movieTracker.presentation.to_watch.WatchlistViewModel
 import com.example.movieTracker.ui.components.TopBar
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieDetailScreen(
     navController: NavController,
@@ -73,7 +73,6 @@ fun MovieDetailScreen(
 ) {
 
     val state by viewModel.state.collectAsState()
-    var bookmarked by remember { mutableStateOf(false) }
 
 
     val movie = state.movie
@@ -170,6 +169,7 @@ fun MovieDetailScreen(
                             if (movie != null) {
                                 BookmarkedButton(movieId = movie.id)
                             }
+                            CheckWatchlist()
                         }
                     }
 
@@ -362,31 +362,41 @@ private fun Details(label: String, value: String, icon: ImageVector) {
 }
 
 @Composable
+fun CheckWatchlist(watchlistViewModel: WatchlistViewModel = hiltViewModel()) {
+    Button(
+        onClick = {
+
+            watchlistViewModel.getWatchlist()
+        },
+        colors = ButtonDefaults.buttonColors(
+            containerColor = Color.LightGray
+        ),
+        shape = RoundedCornerShape(6.dp)
+    ) {
+        Text(text = "log watchlist")
+
+
+    }
+}
+
+@Composable
 fun BookmarkedButton(watchlistViewModel: WatchlistViewModel = hiltViewModel(), movieId: Int) {
 
 
     val watchlistState by watchlistViewModel.watchlistState.collectAsState()
 
 
-    val isBookmarked = remember(watchlistState) {
-        watchlistState.contains(movieId)
+    val isBookmarkedState = remember(watchlistState) {
+        mutableStateOf(watchlistState.contains(movieId))
     }
+    var isBookmarked by isBookmarkedState
+
 
     //  val isBookmarked = watchlistViewModel.isMovieInWatchlist(movieId)
-    /*
-    var isBookmarked by remember { mutableStateOf(watchlistViewModel.isMovieInWatchlist(movieId)) }
-    LaunchedEffect(Unit) {
-        watchlistViewModel.logWatchlistMovies()
-        watchlistViewModel.getWatchlist()
-    }
 
-     */
 
     Row(verticalAlignment = Alignment.CenterVertically) {
         IconButton(onClick = {
-            Log.d("watchlist", "isBookmarked: $isBookmarked")
-
-
 
 
             if (isBookmarked) {
@@ -396,7 +406,9 @@ fun BookmarkedButton(watchlistViewModel: WatchlistViewModel = hiltViewModel(), m
 
                 watchlistViewModel.addToWatchlist(movieId)
             }
-            //  isBookmarked = watchlistViewModel.isMovieInWatchlist(movieId)
+
+            isBookmarked = watchlistState.contains(movieId)
+            Log.d("watchlist", "isBookmarked: $isBookmarked")
         }) {
             Icon(
                 imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,

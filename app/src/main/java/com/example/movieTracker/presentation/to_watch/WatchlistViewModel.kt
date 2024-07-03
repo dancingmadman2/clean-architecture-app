@@ -58,7 +58,6 @@ class WatchlistViewModel @Inject constructor(
     fun addToWatchlist(movieId: Int) {
         watchlist.addMovie(movieId)
         saveWatchlist()
-        Log.d("watchlist", movieId.toString())
     }
 
     fun removeFromWatchlist(movieId: Int) {
@@ -73,7 +72,8 @@ class WatchlistViewModel @Inject constructor(
 
      */
     fun isMovieInWatchlist(movieId: Int): Boolean {
-        return _watchlistState.value.contains(movieId)
+        //return _watchlistState.value.contains(movieId)
+        return watchlist.contains(movieId)
     }
 
     private fun getWatchlistMovies(): Flow<List<Movie>> = flow {
@@ -88,6 +88,11 @@ class WatchlistViewModel @Inject constructor(
 
     fun getWatchlist(): Set<Int> {
         Log.d("watchlist", "movieIds: ${watchlist.getMovieIds()}")
+        viewModelScope.launch {
+            getWatchlistMovies().collect { movies ->
+                Log.d("watchlist", "Movies in watchlist: $movies")
+            }
+        }
         return watchlist.getMovieIds()
     }
 

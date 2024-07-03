@@ -11,7 +11,6 @@ object WatchlistSerializer : Serializer<Set<Int>> {
 
     override suspend fun readFrom(input: InputStream): Set<Int> {
         return try {
-            // Read the data from input stream
             val byteArray = input.readBytes()
             val stringSet =
                 byteArray.decodeToString().split(",").mapNotNull { it.toIntOrNull() }.toSet()
