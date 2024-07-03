@@ -8,6 +8,7 @@ import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.usecase.GetMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -77,6 +78,7 @@ class MovieListViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     val movies = result.data ?: emptyList()
+                    delay(500L)
                     _state.update {
                         it.copy(
                             isLoading = false,

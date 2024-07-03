@@ -18,21 +18,23 @@ import androidx.navigation.NavController
 fun TopBar(
     title: String,
     showBackButton: Boolean = true,
+    collapseAppbar: Boolean = false,
     navController: NavController?,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     TopAppBar(
-
+        //modifier = Modifier.statusBarsPadding(),
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
-        ),
+
+            ),
         title = {
             Text(title)
 
         },
 
-        scrollBehavior = scrollBehavior,
+        scrollBehavior = if (collapseAppbar) null else scrollBehavior,
         navigationIcon = {
             if (showBackButton) {
                 IconButton(onClick = {

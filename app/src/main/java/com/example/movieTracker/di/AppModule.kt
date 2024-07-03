@@ -1,12 +1,15 @@
 package com.example.movieTracker.di
 
 import MovieRepositoryImpl
+import android.content.Context
 import com.example.movieTracker.common.Constants
 import com.example.movieTracker.data.remote.MovieApi
+import com.example.movieTracker.di.watchlist_datastore.watchlistDatastore
 import com.example.movieTracker.domain.repository.MovieRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -44,4 +47,8 @@ object AppModule {
     fun provideMovieRepository(api: MovieApi): MovieRepository {
         return MovieRepositoryImpl(api)
     }
+
+    @Provides
+    @Singleton
+    fun provideDataStore(@ApplicationContext context: Context) = context.watchlistDatastore
 }

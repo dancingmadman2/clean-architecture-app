@@ -94,6 +94,14 @@ dependencies {
 
     implementation("com.valentinilk.shimmer:compose-shimmer:1.3.0")
 
+    implementation("androidx.compose.material:material:1.6.8")
+
+    // data store
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
+
+    // kotlin serializer
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)

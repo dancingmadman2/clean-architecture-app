@@ -1,48 +1,67 @@
 package com.example.movieTracker.presentation.movie_list
 
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.rememberLazyGridState
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import com.example.movieTracker.R
 import com.example.movieTracker.presentation.Screen
+import com.example.movieTracker.presentation.movie_list.components.MovieListGridItem
 import com.example.movieTracker.presentation.movie_list.components.MovieListItem
 import com.example.movieTracker.ui.components.TopBar
 import com.valentinilk.shimmer.shimmer
 
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MovieListScreen(
     navController: NavController,
@@ -54,129 +73,225 @@ fun MovieListScreen(
     val searchText by viewModel.searchText.collectAsState()
     val filteredMovies by viewModel.movies.collectAsState()
     val isSearching by viewModel.isSearching.collectAsState()
+    var checkedState by remember { mutableStateOf(false) }
+
+    val lazyGridState = rememberLazyGridState()
+    val lazyColumnState = rememberLazyListState()
+
+    val showAppBar by remember {
+        derivedStateOf {
+            if (!checkedState)
+                lazyGridState.firstVisibleItemScrollOffset <= 0
+            else lazyColumnState.firstVisibleItemScrollOffset <= 0
+        }
+    }
+
+    val offsetY by animateDpAsState(
+        targetValue = if (showAppBar) 0.dp else -(85).dp,
+        label = ""
+    )
 
 
 
+    Scaffold(
+        topBar = {
 
+            Column(modifier = Modifier.offset(y = offsetY)) {
+                TopBar(
+                    title = "Discover Movies",
+                    false,
+                    collapseAppbar = true,
+                    navController = null
+                )
+                TextField(value = searchText,
+                    onValueChange = { newValue ->
+                        viewModel.onSearchTextChanged(newValue)
+                    },
 
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(75.dp)
+                        .border(
+                            width = 2.dp,
+                            brush = SolidColor(MaterialTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(6.dp)
+                        ),
 
-    Box(modifier = Modifier.fillMaxSize()) {
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "search icon",
+                            tint = Color.Gray,
+                        )
 
+                    },
+                    trailingIcon = {
+                        if (searchText.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Clear,
+                                    contentDescription = "clear icon",
+                                    tint = Color.Gray
+                                )
 
-        Column(modifier = Modifier) {
-            TopBar(title = "Discover Movies", false, null)
-            Spacer(modifier = Modifier.height(20.dp))
-
-            TextField(
-                value = searchText,
-                onValueChange = { newValue ->
-                    viewModel.onSearchTextChanged(newValue)
-                },
-
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "search icon",
-                        tint = Color.Gray,
-                    )
-
-                },
-                trailingIcon = {
-                    if (searchText.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
-                            Icon(
-                                imageVector = Icons.Filled.Clear,
-                                contentDescription = "clear icon",
-                                tint = Color.Gray
-                            )
-
+                            }
                         }
-                    }
-                },
+                    },
 
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.Unspecified,
-                    focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
 
-                ),
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.Unspecified,
+                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
 
-                shape = RoundedCornerShape(6.dp),
-                singleLine = true,
-                placeholder = { Text(text = "Search") }
-            )
+                    ),
 
+                    shape = RoundedCornerShape(6.dp),
+                    singleLine = true,
+                    placeholder = { Text(text = "Search") })
+            }
+        }
+
+    ) { innerPadding ->
+
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .offset(y = offsetY)
+
+
+        ) {
+            Box(modifier = Modifier.padding(16.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Switch(
+                        checked = checkedState,
+                        onCheckedChange = { checkedState = it },
+                    )
+                    Spacer(modifier = Modifier.width(12.5.dp))
+                    Text(text = if (checkedState) "List" else "Grid")
+
+                }
+            }
             if (isSearching) {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     CircularProgressIndicator()
                 }
             } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(3), // Number of columns in the grid
-                    contentPadding = PaddingValues(16.dp),
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (state.isLoading) {
-                        items(24) {
-                            Box(
-                                modifier = Modifier
-                                    .height(200.dp)
-                                    .padding(16.dp)
-                                    .clip(shape = RoundedCornerShape(6.dp))
-                                    .shimmer()
-                                    .background(Color.LightGray)
-                            )
-                        }
-                    } else {
-                        items(filteredMovies) { movie ->
-                            MovieListItem(
-                                movie = movie,
-                                onItemClick = {
-                                    navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-                                }
-                            )
-                        }
 
+                if (!checkedState) {
+                    LazyVerticalGrid(
+                        columns = GridCells.Fixed(3),
+                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        state = lazyGridState
+                    ) {
+                        if (state.isLoading) {
+                            items(24) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(200.dp)
+                                        .padding(16.dp)
+                                        .clip(shape = RoundedCornerShape(6.dp))
+                                        .shimmer()
+                                        .background(Color.LightGray)
+                                )
+                            }
+                        } else if (filteredMovies.isEmpty()) {
 
-                        if (filteredMovies.isEmpty()) {
-                            items(1) {
-
-                                Column() {
-                                    Text(text = "Movei not Found")
-                                    Icon(
-                                        imageVector = Icons.Filled.Search,
+                            item {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.no_result),
                                         contentDescription = "",
-                                        Modifier.size(200.dp)
+                                        modifier = Modifier.size(200.dp),
                                     )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(text = "Movie not Found", color = Color.Gray)
                                 }
                             }
+
+                        } else {
+                            items(filteredMovies) { movie ->
+                                MovieListGridItem(movie = movie, onItemClick = {
+                                    navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                                })
+
+                            }
+
+
                         }
+                    }
+                } else {
+                    LazyColumn(
+                        contentPadding = PaddingValues(16.dp),
+                        modifier = Modifier.fillMaxSize(),
+                        state = lazyColumnState
+                    ) {
+                        if (state.isLoading) {
+                            items(24) {
+                                Box(
+                                    modifier = Modifier
+                                        .height(100.dp)
+                                        .fillMaxWidth()
+                                        .padding(16.dp)
+                                        .clip(shape = RoundedCornerShape(6.dp))
+                                        .shimmer()
+                                        .background(Color.LightGray)
+                                )
+                            }
+                        } else if (filteredMovies.isEmpty()) {
+
+                            item {
+                                Column(
+                                    modifier = Modifier.fillMaxSize(),
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.no_result),
+                                        contentDescription = "",
+                                        modifier = Modifier.size(200.dp),
+                                    )
+                                    Spacer(modifier = Modifier.height(16.dp))
+                                    Text(text = "Movie not Found", color = Color.Gray)
+                                }
+                            }
+
+                        } else {
+                            items(filteredMovies) { movie ->
+                                MovieListItem(movie = movie, onItemClick = {
+                                    navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                                })
+
+                            }
 
 
+                        }
                     }
                 }
 
 
             }
-        }
-        if (state.error.isNotBlank()) {
-            Text(
-                text = state.error,
-                color = Color.Red,
-                textAlign = TextAlign.Center,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp)
-                    .align(Alignment.Center)
-            )
+            if (state.error.isNotBlank()) {
+                Text(
+                    text = state.error,
+                    color = Color.Red,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp)
+
+                )
+            }
         }
 
     }
 }
-

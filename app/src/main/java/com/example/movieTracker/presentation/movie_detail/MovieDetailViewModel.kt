@@ -33,19 +33,12 @@ class MovieDetailViewModel @Inject constructor(
         }
     }
 
-    /*
-        init {
-            savedStateHandle.get<Int>(Constants.MOVIE_ID)?.let { movieId ->
-                getMovieDetail(movieId)
-            }
-        }
 
-
-     */
     private fun getMovieDetail(movieId: Int) {
         getMovieDetailUseCase(movieId).onEach { result ->
             when (result) {
                 is Resource.Success -> {
+                    //   delay(2000L)
                     _state.update {
                         it.copy(
                             movie = result.data,

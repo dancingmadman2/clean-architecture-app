@@ -1,7 +1,9 @@
 import com.example.movieTracker.data.remote.MovieApi
 import com.example.movieTracker.data.remote.dto.movie.MovieDto
+import com.example.movieTracker.data.remote.dto.movie.toMovie
 import com.example.movieTracker.data.remote.dto.movie_detail.credits.MovieCreditsDto
 import com.example.movieTracker.data.remote.dto.movie_detail.overview.MovieDetailDto
+import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.repository.MovieRepository
 import javax.inject.Inject
 
@@ -21,6 +23,10 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovieCredits(movieId: Int): MovieCreditsDto {
         return api.getMovieCredits(movieId)
+    }
+
+    override suspend fun getMovieById(movieId: Int): Movie? {
+        return getMovies().find { it.id == movieId }?.toMovie()
     }
 
 }
