@@ -1,4 +1,4 @@
-package com.example.movieTracker.presentation.to_watch.components
+package com.example.movieTracker.presentation.watchlist.components
 
 
 class Watchlist {

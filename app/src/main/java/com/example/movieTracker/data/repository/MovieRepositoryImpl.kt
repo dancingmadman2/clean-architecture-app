@@ -1,3 +1,5 @@
+package com.example.movieTracker.data.repository
+
 import com.example.movieTracker.data.remote.MovieApi
 import com.example.movieTracker.data.remote.dto.movie.MovieDto
 import com.example.movieTracker.data.remote.dto.movie.toMovie

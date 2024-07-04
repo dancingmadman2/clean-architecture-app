@@ -61,7 +61,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieTracker.presentation.movie_credits.MovieCreditsViewModel
 import com.example.movieTracker.presentation.movie_detail.components.MovieDetailShimmer
-import com.example.movieTracker.presentation.to_watch.WatchlistViewModel
+import com.example.movieTracker.presentation.watchlist.WatchlistViewModel
 import com.example.movieTracker.ui.components.TopBar
 
 

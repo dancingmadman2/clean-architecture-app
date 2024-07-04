@@ -1,4 +1,4 @@
-package com.example.movieTracker.presentation.to_watch
+package com.example.movieTracker.presentation.watchlist
 
 import android.util.Log
 import androidx.datastore.core.DataStore
@@ -6,7 +6,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.repository.MovieRepository
-import com.example.movieTracker.presentation.to_watch.components.Watchlist
+import com.example.movieTracker.domain.usecase.GetMovieByIdUseCase
+import com.example.movieTracker.presentation.watchlist.components.Watchlist
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,7 +21,8 @@ import javax.inject.Inject
 class WatchlistViewModel @Inject constructor(
 
     private val movieRepository: MovieRepository,
-    private val dataStore: DataStore<Set<Int>>
+    private val dataStore: DataStore<Set<Int>>,
+    private val getMovieByIdUseCase: GetMovieByIdUseCase,
 ) :
     ViewModel() {
     private val watchlist = Watchlist()
@@ -76,7 +78,7 @@ class WatchlistViewModel @Inject constructor(
         return watchlist.contains(movieId)
     }
 
-    private fun getWatchlistMovies(): Flow<List<Movie>> = flow {
+    fun getWatchlistMovies(): Flow<List<Movie>> = flow {
         val movieIds = watchlist.getMovieIds()
         val movies = movieIds.mapNotNull { movieId ->
             movieRepository.getMovieById(movieId)
@@ -104,5 +106,7 @@ class WatchlistViewModel @Inject constructor(
         }
     }
 
+
 }
+
 

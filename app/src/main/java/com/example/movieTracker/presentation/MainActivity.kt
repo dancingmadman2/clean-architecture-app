@@ -20,6 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.movieTracker.common.Constants
 import com.example.movieTracker.presentation.movie_detail.MovieDetailScreen
 import com.example.movieTracker.presentation.movie_list.MovieListScreen
+import com.example.movieTracker.presentation.watchlist.WatchlistScreen
 import com.example.movieTracker.ui.components.BotBar
 import com.example.movieTracker.ui.theme.MovieTrackerTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -49,8 +50,9 @@ class MainActivity : ComponentActivity() {
 
                                 when (index) {
                                     0 -> navController.navigate(Screen.MovieListScreen.route)
-
+                                    1 -> navController.navigate(Screen.WatchlistScreen.route)
                                 }
+
 
                             }
                     }
@@ -79,6 +81,12 @@ class MainActivity : ComponentActivity() {
 
                                 MovieDetailScreen(navController)
                                 showBottomBar = false
+                            }
+                            composable(
+                                route = Screen.WatchlistScreen.route
+                            ) {
+                                WatchlistScreen(navController)
+                                showBottomBar = true
                             }
                         }
 

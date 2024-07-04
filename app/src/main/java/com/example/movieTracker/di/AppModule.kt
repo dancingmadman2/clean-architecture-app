@@ -1,9 +1,9 @@
 package com.example.movieTracker.di
 
-import MovieRepositoryImpl
 import android.content.Context
 import com.example.movieTracker.common.Constants
 import com.example.movieTracker.data.remote.MovieApi
+import com.example.movieTracker.data.repository.MovieRepositoryImpl
 import com.example.movieTracker.di.watchlist_datastore.watchlistDatastore
 import com.example.movieTracker.domain.repository.MovieRepository
 import dagger.Module
