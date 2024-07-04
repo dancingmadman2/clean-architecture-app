@@ -27,12 +27,14 @@ fun BotBar(
     val items = listOf("Movies", "To Watch")
     var selectedIndex by remember { mutableIntStateOf(0) }
 
+
+
     Surface(
         modifier = Modifier
             .height(80.dp)
     ) {
         BottomNavigation(
-            backgroundColor = MaterialTheme.colorScheme.primaryContainer, // Set background color of the BottomNavigation
+            backgroundColor = MaterialTheme.colorScheme.primaryContainer,
             contentColor = Color.White,
         ) {
 
@@ -41,9 +43,10 @@ fun BotBar(
 
                     icon = {
                         when (index) {
+
                             0 -> Icon(Icons.Filled.Movie, contentDescription = "Movies")
                             1 -> Icon(Icons.Filled.Bookmark, contentDescription = "Watchlist")
-                            else -> {} // Handle other indices if needed
+                            else -> {}
                         }
                     },
                     label = { Text(item) },

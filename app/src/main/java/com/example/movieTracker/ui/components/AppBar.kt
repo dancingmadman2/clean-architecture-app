@@ -11,6 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
+import com.example.movieTracker.presentation.movie_detail.BookmarkedButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -19,11 +20,13 @@ fun TopBar(
     title: String,
     showBackButton: Boolean = true,
     collapseAppbar: Boolean = false,
+    showBookmark: Boolean = false,
+    movieId: Int = 0,
     navController: NavController?,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     TopAppBar(
-        //modifier = Modifier.statusBarsPadding(),
+        //  modifier = Modifier.statusBarsPadding(),
         colors = TopAppBarDefaults.topAppBarColors(
             containerColor = MaterialTheme.colorScheme.primaryContainer,
             titleContentColor = MaterialTheme.colorScheme.primary,
@@ -32,6 +35,10 @@ fun TopBar(
         title = {
             Text(title)
 
+        },
+        actions = {
+            if (showBookmark)
+                BookmarkedButton(movieId = movieId)
         },
 
         scrollBehavior = if (collapseAppbar) null else scrollBehavior,

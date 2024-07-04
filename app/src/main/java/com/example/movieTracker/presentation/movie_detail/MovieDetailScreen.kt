@@ -26,7 +26,6 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material.icons.filled.Movie
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.StarRate
 import androidx.compose.material.icons.filled.Timelapse
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -34,6 +33,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -61,6 +61,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import com.example.movieTracker.presentation.movie_credits.MovieCreditsViewModel
 import com.example.movieTracker.presentation.movie_detail.components.MovieDetailShimmer
+import com.example.movieTracker.presentation.movie_detail.components.RatingBar
 import com.example.movieTracker.presentation.watchlist.WatchlistViewModel
 import com.example.movieTracker.ui.components.TopBar
 
@@ -80,14 +81,27 @@ fun MovieDetailScreen(
     Scaffold(
         topBar = {
 
-            TopBar(
-                title = "${movie?.title}",
-                navController = navController
-            )
+            Row(
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                TopBar(
+                    title = "${movie?.title}",
+                    navController = navController,
+                    showBookmark = true,
+                    movieId = movie?.id ?: 0
+                )
+
+                //movie?.let { BookmarkedButton(movieId = it.id) }
+
+            }
         }
 
     ) { innerPadding ->
-        Box(modifier = Modifier.fillMaxSize()) {
+        Surface(
+
+            modifier = Modifier
+                .fillMaxSize()
+        ) {
 
 
             Column(
@@ -114,7 +128,7 @@ fun MovieDetailScreen(
                                 "https://image.tmdb.org/t/p/w185${movie?.posterPath}"
                             AsyncImage(
                                 model = imageUrl,
-                                contentDescription = "Movie Poster",
+                                contentDescription = "movie poster",
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .aspectRatio(0.665f)
@@ -143,40 +157,48 @@ fun MovieDetailScreen(
                                 value = "${movie?.productionCompanies?.get(0)?.name}",
                                 icon = Icons.Filled.Movie
                             )
-                            Details(
-                                label = "Budget: ",
-                                value = "${movie?.budget} $",
-                                icon = Icons.Filled.AttachMoney
-                            )
-                            Details(
-                                label = "Revenue: ",
-                                value = "${movie?.revenue} $",
-                                icon = Icons.Filled.AttachMoney
-                            )
-                            Details(
-                                label = "Popularity: ",
-                                value = "${movie?.popularity}",
-                                icon = Icons.Filled.People
-                            )
-                            Details(
-                                label = "Rating: ",
-                                value = "${movie?.voteAverage} / 10",
-                                icon = Icons.Filled.StarRate
-                            )
-
                             Spacer(modifier = Modifier.height(12.dp))
-
                             if (movie != null) {
-                                BookmarkedButton(movieId = movie.id)
+                                RatingBar(
+                                    rating = (movie.voteAverage.div(2).toFloat()),
+
+                                    )
                             }
-                            CheckWatchlist()
+
+
                         }
                     }
 
+                    Row(
+
+                    ) {
+                        if (movie != null) {
+                            Details(
+                                label = "Budget: ",
+                                value = "${formatLargeNumber(movie.budget.toLong())} $",
+                                icon = Icons.Filled.AttachMoney
+                            )
+                        }
+                        if (movie != null) {
+                            Details(
+                                label = "Revenue: ",
+                                value = "${formatLargeNumber(movie.revenue.toLong())} $",
+                                icon = Icons.Filled.AttachMoney
+                            )
+                        }
+                        if (movie != null) {
+                            Details(
+                                label = "Popularity: ",
+                                value = "${formatLargeNumber(movie.popularity.toLong())} $",
+                                icon = Icons.Filled.People
+                            )
+                        }
+                    }
 
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
+
                         Text(
                             text = "Overview",
 
@@ -210,42 +232,46 @@ fun MovieDetailScreen(
                                 )
 
                                 Spacer(modifier = Modifier.height(12.dp))
-                                Column {
+                                Row {
+                                    Column {
 
-                                    Box(modifier = Modifier.clip(shape = RoundedCornerShape(6.dp))) {
-                                        if (credits?.crew?.get(0)?.profilePath != null) {
-                                            val imageUrl =
-                                                "https://image.tmdb.org/t/p/w185${credits.crew[0].profilePath}"
-                                            AsyncImage(
-                                                model = imageUrl,
-                                                contentDescription = "Movie Poster",
-                                                modifier = Modifier
-                                                    .scale(1.15F)
-                                                    .height(150.dp)
-                                            )
-                                        } else {
-                                            Box(
-                                                modifier = Modifier.clip(
-                                                    shape = RoundedCornerShape(
-                                                        6.dp
-                                                    )
-                                                )
-                                            ) {
-                                                Icon(
-                                                    imageVector = Icons.Filled.Person,
-                                                    contentDescription = "",
+                                        Box(modifier = Modifier.clip(shape = RoundedCornerShape(6.dp))) {
+                                            if (credits?.crew?.get(0)?.profilePath != null) {
+                                                val imageUrl =
+                                                    "https://image.tmdb.org/t/p/w185${credits.crew[0].profilePath}"
+                                                AsyncImage(
+                                                    model = imageUrl,
+                                                    contentDescription = "director",
                                                     modifier = Modifier
+                                                        .scale(1.15F)
                                                         .height(150.dp)
-                                                        .scale(1.5F)
-                                                        .aspectRatio(0.665F)
                                                 )
+                                            } else {
+                                                Box(
+                                                    modifier = Modifier.clip(
+                                                        shape = RoundedCornerShape(
+                                                            6.dp
+                                                        )
+                                                    )
+                                                ) {
+                                                    Icon(
+                                                        imageVector = Icons.Filled.Person,
+                                                        contentDescription = "",
+                                                        modifier = Modifier
+                                                            .height(150.dp)
+                                                            .scale(1.5F)
+                                                            .aspectRatio(0.665F)
+                                                    )
+                                                }
                                             }
+
                                         }
 
+                                        Text(text = "${credits?.crew?.get(0)?.name}")
                                     }
 
-                                    Text(text = "${credits?.crew?.get(0)?.name}")
                                 }
+
                             }
 
                         }
@@ -281,12 +307,16 @@ fun MovieDetailScreen(
                                             if (cast?.profilePath != null) {
                                                 val imageUrl =
                                                     "https://image.tmdb.org/t/p/w185${cast.profilePath}"
+
+
+
                                                 AsyncImage(
                                                     model = imageUrl,
-                                                    contentDescription = "Movie Poster",
+                                                    contentDescription = "cast",
                                                     modifier = Modifier
                                                         .scale(1.15F)
                                                         .height(150.dp)
+
                                                 )
                                             } else {
                                                 Box(
@@ -321,19 +351,16 @@ fun MovieDetailScreen(
 
                     }
                 }
-            }
-
-
-            if (state.error.isNotBlank()) {
-                Text(
-                    text = state.error,
-                    color = Color.Red,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
-                        .align(Alignment.Center)
-                )
+                if (state.error.isNotBlank()) {
+                    Text(
+                        text = state.error,
+                        color = Color.Red,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 20.dp)
+                    )
+                }
             }
 
 
@@ -343,7 +370,10 @@ fun MovieDetailScreen(
 
 @Composable
 private fun Details(label: String, value: String, icon: ImageVector) {
-    Row {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier.padding(top = 12.dp, start = 4.dp, end = 4.dp)
+    ) {
         Icon(imageVector = icon, contentDescription = "")
         Spacer(modifier = Modifier.width(4.dp))
         Text(
@@ -356,8 +386,8 @@ private fun Details(label: String, value: String, icon: ImageVector) {
 
             },
             style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 4.dp)
-        )
+
+            )
     }
 }
 
@@ -380,7 +410,11 @@ fun CheckWatchlist(watchlistViewModel: WatchlistViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun BookmarkedButton(watchlistViewModel: WatchlistViewModel = hiltViewModel(), movieId: Int) {
+fun BookmarkedButton(
+    watchlistViewModel: WatchlistViewModel = hiltViewModel(),
+    movieId: Int,
+    showText: Boolean = false,
+) {
 
 
     val watchlistState by watchlistViewModel.watchlistState.collectAsState()
@@ -415,6 +449,16 @@ fun BookmarkedButton(watchlistViewModel: WatchlistViewModel = hiltViewModel(), m
                 contentDescription = ""
             )
         }
-        Text(text = "Add to watchlist")
+        if (showText)
+            Text(text = "Add to watchlist")
+    }
+}
+
+fun formatLargeNumber(number: Long): String {
+    return when {
+        number >= 1_000_000_000 -> String.format("%.1fB", number / 1_000_000_000.0)
+        number >= 1_000_000 -> String.format("%.1fM", number / 1_000_000.0)
+        number >= 1_000 -> String.format("%.1fK", number / 1_000.0)
+        else -> number.toString()
     }
 }

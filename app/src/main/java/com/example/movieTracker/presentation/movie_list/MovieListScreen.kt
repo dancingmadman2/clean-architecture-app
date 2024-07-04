@@ -79,15 +79,44 @@ fun MovieListScreen(
     val lazyColumnState = rememberLazyListState()
 
     val showAppBar by remember {
+        var previousScrollOffset = 0
         derivedStateOf {
-            if (!checkedState)
-                lazyGridState.firstVisibleItemScrollOffset <= 0
-            else lazyColumnState.firstVisibleItemScrollOffset <= 0
+            val currentScrollOffset = if (!checkedState) {
+                lazyGridState.firstVisibleItemScrollOffset
+            } else {
+                lazyColumnState.firstVisibleItemScrollOffset
+            }
+
+            val scrollingUp = currentScrollOffset < previousScrollOffset
+            previousScrollOffset = currentScrollOffset
+
+            if (scrollingUp) {
+                true
+            } else {
+                if (!checkedState) {
+                    lazyGridState.firstVisibleItemScrollOffset <= 0
+                } else {
+                    lazyColumnState.firstVisibleItemScrollOffset <= 0
+                }
+            }
         }
     }
 
+    /*
+    val showAppBar by remember {
+        derivedStateOf {
+            if (!checkedState) {
+
+                lazyGridState.firstVisibleItemScrollOffset <= 0
+            } else {
+                lazyColumnState.firstVisibleItemScrollOffset <= 0
+            }
+
+        }
+    }
+     */
     val offsetY by animateDpAsState(
-        targetValue = if (showAppBar) 0.dp else -(85).dp,
+        targetValue = if (showAppBar) 0.dp else -(95).dp,
         label = ""
     )
 
@@ -96,62 +125,14 @@ fun MovieListScreen(
     Scaffold(
         topBar = {
 
-            Column(modifier = Modifier.offset(y = offsetY)) {
+            Column() {
                 TopBar(
                     title = "Discover Movies",
                     false,
                     collapseAppbar = true,
                     navController = null
                 )
-                TextField(value = searchText,
-                    onValueChange = { newValue ->
-                        viewModel.onSearchTextChanged(newValue)
-                    },
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(75.dp)
-                        .border(
-                            width = 2.dp,
-                            brush = SolidColor(MaterialTheme.colorScheme.primary),
-                            shape = RoundedCornerShape(6.dp)
-                        ),
-
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "search icon",
-                            tint = Color.Gray,
-                        )
-
-                    },
-                    trailingIcon = {
-                        if (searchText.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Clear,
-                                    contentDescription = "clear icon",
-                                    tint = Color.Gray
-                                )
-
-                            }
-                        }
-                    },
-
-
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.Unspecified,
-                        focusedContainerColor = MaterialTheme.colorScheme.primaryContainer,
-                        cursorColor = MaterialTheme.colorScheme.primary,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-
-                    ),
-
-                    shape = RoundedCornerShape(6.dp),
-                    singleLine = true,
-                    placeholder = { Text(text = "Search") })
             }
         }
 
@@ -165,6 +146,55 @@ fun MovieListScreen(
 
 
         ) {
+            TextField(value = searchText,
+                onValueChange = { newValue ->
+                    viewModel.onSearchTextChanged(newValue)
+                },
+
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp)
+                    .height(75.dp)
+                    .border(
+                        width = 2.dp,
+                        brush = SolidColor(MaterialTheme.colorScheme.primary),
+                        shape = RoundedCornerShape(6.dp)
+                    ),
+
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "search icon",
+                        tint = Color.Gray,
+                    )
+
+                },
+                trailingIcon = {
+                    if (searchText.isNotEmpty()) {
+                        IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
+                            Icon(
+                                imageVector = Icons.Filled.Clear,
+                                contentDescription = "clear icon",
+                                tint = Color.Gray
+                            )
+
+                        }
+                    }
+                },
+
+
+                colors = TextFieldDefaults.colors(
+                    unfocusedContainerColor = Color.White,
+                    focusedContainerColor = Color.White,
+                    cursorColor = MaterialTheme.colorScheme.primary,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent
+
+                ),
+
+                shape = RoundedCornerShape(6.dp),
+                singleLine = true,
+                placeholder = { Text(text = "Search") })
             Box(modifier = Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(

@@ -42,6 +42,10 @@ class WatchlistViewModel @Inject constructor(
                 _watchlistState.value = updatedSet
                 updatedSet
             }
+            Log.d("watchlist", "movieIds: ${watchlist.getMovieIds()}")
+            getWatchlistMovies().collect { movies ->
+                Log.d("watchlist", "Movies: $movies")
+            }
         }
     }
 
@@ -75,6 +79,7 @@ class WatchlistViewModel @Inject constructor(
      */
     fun isMovieInWatchlist(movieId: Int): Boolean {
         //return _watchlistState.value.contains(movieId)
+        
         return watchlist.contains(movieId)
     }
 
@@ -92,18 +97,10 @@ class WatchlistViewModel @Inject constructor(
         Log.d("watchlist", "movieIds: ${watchlist.getMovieIds()}")
         viewModelScope.launch {
             getWatchlistMovies().collect { movies ->
-                Log.d("watchlist", "Movies in watchlist: $movies")
+                Log.d("watchlist", "Movies: $movies")
             }
         }
         return watchlist.getMovieIds()
-    }
-
-    fun logWatchlistMovies() {
-        viewModelScope.launch {
-            getWatchlistMovies().collect { movies ->
-                Log.d("watchlist", "Movies in watchlist: $movies")
-            }
-        }
     }
 
 

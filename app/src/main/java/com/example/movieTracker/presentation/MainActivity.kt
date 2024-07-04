@@ -32,10 +32,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
 
-        //WindowCompat.setDecorFitsSystemWindows(window, false)
+
 
         enableEdgeToEdge()
         setContent {
+
 
             MovieTrackerTheme {
                 var selectedIndex by remember { mutableIntStateOf(0) }

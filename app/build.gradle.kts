@@ -102,6 +102,9 @@ dependencies {
     // kotlin serializer
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.1")
 
+    // accompaniest
+    implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
