@@ -20,7 +20,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
-import com.example.movieTracker.presentation.movie_detail.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
 
 @Composable
 fun MovieListItem(

@@ -3,6 +3,8 @@ package com.example.movieTracker.di.watchlist_datastore
 
 import androidx.datastore.core.Serializer
 import androidx.datastore.preferences.protobuf.InvalidProtocolBufferException
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.io.OutputStream
 
@@ -22,6 +24,8 @@ object WatchlistSerializer : Serializer<Set<Int>> {
 
     override suspend fun writeTo(t: Set<Int>, output: OutputStream) {
         val byteArray = t.joinToString(",").encodeToByteArray()
-        output.write(byteArray)
+        withContext(Dispatchers.IO) {
+            output.write(byteArray)
+        }
     }
 }

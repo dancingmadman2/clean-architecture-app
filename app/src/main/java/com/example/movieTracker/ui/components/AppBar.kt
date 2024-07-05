@@ -11,7 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.movieTracker.presentation.movie_detail.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
