@@ -1,6 +1,6 @@
 package com.example.movieTracker.presentation.movie_list
 
-import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -78,7 +77,7 @@ fun MovieListScreen(
     val lazyGridState = rememberLazyGridState()
     val lazyColumnState = rememberLazyListState()
 
-    val showAppBar by remember {
+    val showSearchBar by remember {
         var previousScrollOffset = 0
         derivedStateOf {
             val currentScrollOffset = if (!checkedState) {
@@ -115,10 +114,7 @@ fun MovieListScreen(
         }
     }
      */
-    val offsetY by animateDpAsState(
-        targetValue = if (showAppBar) 0.dp else -(95).dp,
-        label = ""
-    )
+
 
 
 
@@ -142,59 +138,60 @@ fun MovieListScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .offset(y = offsetY)
 
 
         ) {
-            TextField(value = searchText,
-                onValueChange = { newValue ->
-                    viewModel.onSearchTextChanged(newValue)
-                },
+            AnimatedVisibility(showSearchBar) {
+                TextField(value = searchText,
+                    onValueChange = { newValue ->
+                        viewModel.onSearchTextChanged(newValue)
+                    },
 
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp)
-                    .height(75.dp)
-                    .border(
-                        width = 2.dp,
-                        brush = SolidColor(MaterialTheme.colorScheme.primary),
-                        shape = RoundedCornerShape(6.dp)
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .height(75.dp)
+                        .border(
+                            width = 2.dp,
+                            brush = SolidColor(MaterialTheme.colorScheme.primary),
+                            shape = RoundedCornerShape(6.dp)
+                        ),
+
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "search icon",
+                            tint = Color.Gray,
+                        )
+
+                    },
+                    trailingIcon = {
+                        if (searchText.isNotEmpty()) {
+                            IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Clear,
+                                    contentDescription = "clear icon",
+                                    tint = Color.Gray
+                                )
+
+                            }
+                        }
+                    },
+
+
+                    colors = TextFieldDefaults.colors(
+                        unfocusedContainerColor = Color.White,
+                        focusedContainerColor = Color.White,
+                        cursorColor = MaterialTheme.colorScheme.primary,
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent
+
                     ),
 
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Filled.Search,
-                        contentDescription = "search icon",
-                        tint = Color.Gray,
-                    )
-
-                },
-                trailingIcon = {
-                    if (searchText.isNotEmpty()) {
-                        IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
-                            Icon(
-                                imageVector = Icons.Filled.Clear,
-                                contentDescription = "clear icon",
-                                tint = Color.Gray
-                            )
-
-                        }
-                    }
-                },
-
-
-                colors = TextFieldDefaults.colors(
-                    unfocusedContainerColor = Color.White,
-                    focusedContainerColor = Color.White,
-                    cursorColor = MaterialTheme.colorScheme.primary,
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent
-
-                ),
-
-                shape = RoundedCornerShape(6.dp),
-                singleLine = true,
-                placeholder = { Text(text = "Search") })
+                    shape = RoundedCornerShape(6.dp),
+                    singleLine = true,
+                    placeholder = { Text(text = "Search") })
+            }
             Box(modifier = Modifier.padding(16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Switch(

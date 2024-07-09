@@ -11,7 +11,7 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavController
-import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +38,7 @@ fun TopBar(
         },
         actions = {
             if (showBookmark)
-                BookmarkedButton(movieId = movieId)
+                BookmarkButton(movieId = movieId)
         },
 
         scrollBehavior = if (collapseAppbar) null else scrollBehavior,

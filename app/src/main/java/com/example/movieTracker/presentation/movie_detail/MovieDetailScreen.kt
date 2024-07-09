@@ -79,7 +79,7 @@ fun MovieDetailScreen(
             ) {
                 if (movie != null) {
                     TopBar(
-                        title = "${movie?.title}",
+                        title = movie.title,
                         navController = navController,
                         showBookmark = true,
                         movieId = movie.id

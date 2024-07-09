@@ -6,6 +6,7 @@ import com.example.movieTracker.common.Resource
 import com.example.movieTracker.data.remote.dto.movie.toMovie
 import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.repository.MovieRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import java.io.IOException
@@ -19,6 +20,7 @@ class GetMoviesUseCase @Inject constructor(
         try {
             emit(Resource.Loading())
             val movies = repository.getMovies().map { it.toMovie() }
+            delay(500L)
             emit(Resource.Success(movies))
         } catch (@SuppressLint("NewApi") e: HttpException) {
             emit(Resource.Error(e.localizedMessage ?: "Errormania occured."))

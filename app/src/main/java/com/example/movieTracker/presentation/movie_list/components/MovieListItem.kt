@@ -20,13 +20,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
-import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
 @Composable
 fun MovieListItem(
     movie: Movie,
     onItemClick: (Movie) -> Unit
 ) {
+    val imageUrl =
+        "https://image.tmdb.org/t/p/w185${movie.posterPath}" // imageUrl movie dataclassina tasinacak
 
     Column(
         modifier = Modifier
@@ -37,10 +39,10 @@ fun MovieListItem(
 
 
     ) {
-        val imageUrl = "https://image.tmdb.org/t/p/w185${movie.posterPath}"
 
 
         Row() {
+
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Movie Poster",
@@ -60,7 +62,7 @@ fun MovieListItem(
                             )
                         )
                     }
-                    BookmarkedButton(movieId = movie.id)
+                    BookmarkButton(movieId = movie.id)
                 }
                 Text(
                     text = if (movie.overview.length < 100) movie.overview else "${

@@ -42,7 +42,7 @@ fun MovieListGridItem(
         ) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = "Movie Poster",
+                contentDescription = "",// content description arastirilacak
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .scale(1f)
