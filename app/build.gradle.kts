@@ -104,6 +104,14 @@ dependencies {
 
     // accompaniest
     implementation("com.google.accompanist:accompanist-systemuicontroller:0.27.0")
+    implementation("com.google.accompanist:accompanist-navigation-animation:0.27.0")
+
+
+    implementation(libs.androidx.compose.animation)
+    implementation(libs.androidx.navigation.compose)
+    
+    //implementation("androidx.compose.animation:animation:1.6.8")
+    //implementation("androidx.compose.foundation:foundation:1.6.8")
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)

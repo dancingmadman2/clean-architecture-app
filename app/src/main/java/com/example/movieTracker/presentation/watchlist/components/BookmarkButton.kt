@@ -27,10 +27,10 @@ fun BookmarkButton(
 
 
     val state by watchlistViewModel.state.collectAsState()
-    val watchlistState by watchlistViewModel.watchlistState.collectAsState()
+    // val watchlistState by watchlistViewModel.watchlistState.collectAsState()
 
-    val isBookmarkedState = remember(watchlistState) {
-        mutableStateOf(watchlistState.contains(movieId))
+    val isBookmarkedState = remember(state) {
+        mutableStateOf(state.watchlistMovieIds.contains(movieId))
     }
     var isBookmarked by isBookmarkedState
 

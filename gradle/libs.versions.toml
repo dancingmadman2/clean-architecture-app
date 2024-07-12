@@ -3,6 +3,7 @@ agp = "8.5.0"
 converterGson = "2.11.0"
 hiltAndroid = "2.48"
 hiltCompiler = "2.48"
+animationCompose = "1.7.0-alpha07"
 navigationComposeVersion = "2.7.7"
 hiltLifecycleViewmodel = "1.0.0-alpha03"
 kotlin = "2.0.0"
@@ -16,6 +17,8 @@ composeBom = "2024.06.00"
 retrofit = "2.11.0"
 transportRuntime = "3.3.0"
 navigationRuntimeKtx = "2.7.7"
+composeAnimation = "1.7.0-beta05"
+navigationCompose = "2.7.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -24,17 +27,17 @@ androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = 
 hilt-android-compiler = { module = "com.google.dagger:hilt-android-compiler", version.ref = "hiltAndroid" }
 androidx-hilt-compiler = { module = "androidx.hilt:hilt-compiler", version.ref = "hiltCompiler" }
 androidx-hilt-lifecycle-viewmodel = { module = "androidx.hilt:hilt-lifecycle-viewmodel", version.ref = "hiltLifecycleViewmodel" }
-lifecycle-viewmodel-compose = {module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.2"}
-lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.8.2"}
-lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.2"}
+lifecycle-viewmodel-compose = { module = "androidx.lifecycle:lifecycle-viewmodel-compose", version = "2.8.2" }
+lifecycle-viewmodel-ktx = { module = "androidx.lifecycle:lifecycle-viewmodel-ktx", version = "2.8.2" }
+lifecycle-runtime-compose = { module = "androidx.lifecycle:lifecycle-runtime-compose", version = "2.8.2" }
 androidx-hilt-navigation-compose = { module = "androidx.hilt:hilt-navigation-compose", version.ref = "hiltCompiler" }
 androidx-hilt-work = { module = "androidx.hilt:hilt-work", version.ref = "hiltCompiler" }
 #hilt-android = { module = "com.google.dagger:hilt-android", version.ref = "hiltAndroid" }
 #hilt-compiler = { module = "com.google.dagger:hilt-compiler", version.ref = "hiltCompilerVersion" }
-hilt-android = { group = "com.google.dagger", name = "hilt-android" , version.ref = "hiltAndroid"}
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler" , version.ref = "hiltCompiler"}
-work-runtime = { module = "androidx.work:work-runtime-ktx", version = "2.9.0"}
-navigation-compose = { group = "androidx.navigation", name = "navigation-compose" , version.ref = "navigationComposeVersion"}
+hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
+hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltCompiler" }
+work-runtime = { module = "androidx.work:work-runtime-ktx", version = "2.9.0" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
 
 converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 
@@ -52,8 +55,12 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
+androidx-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "animationCompose" }
 transport-runtime = { group = "com.google.android.datatransport", name = "transport-runtime", version.ref = "transportRuntime" }
 androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-compose-animation = { group = "androidx.compose.animation", name = "animation", version.ref = "composeAnimation" }
+androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+
 
 [plugins]
 android-application = { id = "com.android.application", version = "8.5.0" }

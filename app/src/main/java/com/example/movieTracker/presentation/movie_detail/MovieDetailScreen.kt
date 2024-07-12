@@ -1,5 +1,10 @@
 package com.example.movieTracker.presentation.movie_detail
 
+import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,11 +64,13 @@ import com.example.movieTracker.presentation.watchlist.WatchlistViewModel
 import com.example.movieTracker.ui.components.TopBar
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieDetailScreen(
+fun SharedTransitionScope.MovieDetailScreen(
     navController: NavController,
     viewModel: MovieDetailViewModel = hiltViewModel(),
-    creditsViewModel: MovieCreditsViewModel = hiltViewModel()
+    creditsViewModel: MovieCreditsViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
 
     val state by viewModel.state.collectAsState()
@@ -127,6 +134,15 @@ fun MovieDetailScreen(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .aspectRatio(0.665f)
+                                    .sharedElement(
+                                        state = rememberSharedContentState(key = "poster/${movie?.id}"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+
+                                            tween(durationMillis = 1000)
+                                        }
+
+                                    )
                             )
                         }
                         Spacer(modifier = Modifier.width(24.dp))
@@ -136,7 +152,17 @@ fun MovieDetailScreen(
                                 style = TextStyle(
                                     fontSize = 24.sp,
                                 ),
-                                overflow = TextOverflow.Ellipsis
+                                overflow = TextOverflow.Ellipsis,
+                                modifier = Modifier
+                                    .sharedElement(
+                                        state = rememberSharedContentState(key = "title/${movie?.id}"),
+                                        animatedVisibilityScope = animatedVisibilityScope,
+                                        boundsTransform = { _, _ ->
+
+                                            tween(durationMillis = 1000)
+                                        }
+
+                                    )
                             )
                             Spacer(modifier = Modifier.height(12.dp))
                             Details(
@@ -404,6 +430,7 @@ fun CheckWatchlist(watchlistViewModel: WatchlistViewModel = hiltViewModel()) {
     }
 }
 
+@SuppressLint("DefaultLocale")
 fun formatLargeNumber(number: Long): String {
     return when {
         number >= 1_000_000_000 -> String.format("%.1fB", number / 1_000_000_000.0)

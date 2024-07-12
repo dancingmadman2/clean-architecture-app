@@ -1,6 +1,9 @@
 package com.example.movieTracker.presentation.movie_list
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -61,12 +64,15 @@ import com.example.movieTracker.ui.components.TopBar
 import com.valentinilk.shimmer.shimmer
 
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieListScreen(
+fun SharedTransitionScope.MovieListScreen(
     navController: NavController,
     viewModel: MovieListViewModel = hiltViewModel(),
+    animatedVisibilityScope: AnimatedVisibilityScope,
 
     ) {
+
     val state by viewModel.state.collectAsState()
 
     val searchText by viewModel.searchText.collectAsState()
@@ -247,9 +253,14 @@ fun MovieListScreen(
 
                         } else {
                             items(filteredMovies) { movie ->
-                                MovieListGridItem(movie = movie, onItemClick = {
-                                    navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-                                })
+                                MovieListGridItem(
+                                    movie = movie,
+                                    onItemClick = {
+                                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+
+                                    },
+                                    animatedVisibilityScope = animatedVisibilityScope
+                                )
 
                             }
 
@@ -294,9 +305,12 @@ fun MovieListScreen(
 
                         } else {
                             items(filteredMovies) { movie ->
-                                MovieListItem(movie = movie, onItemClick = {
-                                    navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-                                })
+                                MovieListItem(
+                                    movie = movie,
+                                    onItemClick = {
+                                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                                    },
+                                )
 
                             }
 

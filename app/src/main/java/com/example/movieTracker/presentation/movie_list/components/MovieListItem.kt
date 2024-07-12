@@ -1,6 +1,7 @@
 package com.example.movieTracker.presentation.movie_list.components
 
 
+import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,10 +23,11 @@ import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
 fun MovieListItem(
     movie: Movie,
-    onItemClick: (Movie) -> Unit
+    onItemClick: (Movie) -> Unit,
 ) {
     val imageUrl =
         "https://image.tmdb.org/t/p/w185${movie.posterPath}" // imageUrl movie dataclassina tasinacak
@@ -50,13 +52,15 @@ fun MovieListItem(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
 
+
             )
             Spacer(modifier = Modifier.width(20.dp))
             Column {
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = movie.title, modifier = Modifier.padding(top = 8.dp),
+                            text = movie.title, modifier = Modifier
+                                .padding(top = 8.dp),
                             style = TextStyle(
                                 fontSize = 20.sp
                             )

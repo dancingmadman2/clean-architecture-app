@@ -1,8 +1,13 @@
 package com.example.movieTracker.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
 import com.example.movieTracker.common.Constants
+import com.example.movieTracker.data.local.DatastoreLocalDataSource
+import com.example.movieTracker.data.local.LocalDataSource
 import com.example.movieTracker.data.remote.MovieApi
+import com.example.movieTracker.data.remote.MovieApiRemoteDataSource
+import com.example.movieTracker.data.remote.RemoteDataSource
 import com.example.movieTracker.data.repository.MovieRepositoryImpl
 import com.example.movieTracker.di.watchlist_datastore.watchlistDatastore
 import com.example.movieTracker.domain.repository.MovieRepository
@@ -23,7 +28,6 @@ object AppModule {
 
     @Provides
     @Singleton
-
     fun provideOkHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
@@ -43,11 +47,32 @@ object AppModule {
             .create(MovieApi::class.java)
     }
 
+
     @Provides
     @Singleton
-    fun provideMovieRepository(api: MovieApi): MovieRepository {
-        return MovieRepositoryImpl(api)
+    fun provideMovieRepository(
+        remoteDataSource: RemoteDataSource,
+        localDataSource: LocalDataSource
+    ): MovieRepository {
+        return MovieRepositoryImpl(remoteDataSource, localDataSource)
     }
+
+    @Provides
+    @Singleton
+    fun provideLocalDataSource(
+        dataStore: DataStore<Set<Int>>
+    ): LocalDataSource {
+        return DatastoreLocalDataSource(dataStore)
+    }
+
+    @Provides
+    @Singleton
+    fun provideRemoteDataSource(
+        api: MovieApi
+    ): RemoteDataSource {
+        return MovieApiRemoteDataSource(api)
+    }
+
 
     @Provides
     @Singleton
