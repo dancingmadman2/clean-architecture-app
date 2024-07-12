@@ -6,7 +6,10 @@ import com.example.movieTracker.data.remote.dto.movie.MovieDto
 import com.example.movieTracker.data.remote.dto.movie_detail.credits.MovieCreditsDto
 import com.example.movieTracker.data.remote.dto.movie_detail.overview.MovieDetailDto
 import com.example.movieTracker.domain.repository.MovieRepository
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -19,6 +22,7 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun getMovies(): List<MovieDto> {
         return remoteDataSource.getMovies()
+
     }
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetailDto {
@@ -33,19 +37,20 @@ class MovieRepositoryImpl @Inject constructor(
         return getMovies().find { it.id == movieId }
     }
 
-    override suspend fun getWatchlist(): Flow<Set<Int>> {
-        return localDataSource.getWatchlist()
+    override suspend fun loadWatchlist(): Flow<Set<Int>> {
+        return localDataSource.loadWatchlist()
+            .flowOn(Dispatchers.IO)
     }
 
-    override suspend fun addToWatchlist(movieId: Int) {
+    override suspend fun addToWatchlist(movieId: Int) = withContext(Dispatchers.IO) {
         localDataSource.addToWatchlist(movieId)
     }
 
-    override suspend fun removeFromWatchlist(movieId: Int) {
+    override suspend fun removeFromWatchlist(movieId: Int) = withContext(Dispatchers.IO) {
         localDataSource.removeFromWatchlist(movieId)
     }
 
-    override suspend fun saveWatchlist(watchlist: Set<Int>) {
+    override suspend fun saveWatchlist(watchlist: Set<Int>) = withContext(Dispatchers.IO) {
         localDataSource.saveWatchlist(watchlist)
 
     }

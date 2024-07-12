@@ -7,6 +7,8 @@ import com.example.movieTracker.common.Resource
 import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.repository.MovieRepository
 import com.example.movieTracker.domain.usecase.GetMovieByIdUseCase
+import com.example.movieTracker.domain.usecase.LoadWatchlistUseCase
+import com.example.movieTracker.domain.usecase.SaveWatchlistUseCase
 import com.example.movieTracker.presentation.watchlist.components.Watchlist
 import com.example.movieTracker.presentation.watchlist.components.WatchlistState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +16,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -23,6 +24,8 @@ import javax.inject.Inject
 @HiltViewModel
 class WatchlistViewModel @Inject constructor(
     //private val dataStore: DataStore<Set<Int>>,
+    private val loadWatchlistUseCase: LoadWatchlistUseCase,
+    private val saveWatchlistUseCase: SaveWatchlistUseCase,
     private val movieRepository: MovieRepository,
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
 ) : ViewModel() {
@@ -34,8 +37,9 @@ class WatchlistViewModel @Inject constructor(
     // val watchlistState: StateFlow<Set<Int>> = _watchlistState
 
     init {
+
         viewModelScope.launch {
-            movieRepository.getWatchlist().firstOrNull()?.let { storedSet ->
+            loadWatchlistUseCase()?.let { storedSet ->
                 //   _watchlistState.value = storedSet
                 storedSet.forEach { movieId ->
                     watchlist.addMovie(movieId)
@@ -43,13 +47,14 @@ class WatchlistViewModel @Inject constructor(
             }
             _state.update { it.copy(watchlistMovieIds = watchlist.getMovieIds()) }
         }
-        //loadWatchlist()
+
 
     }
 
     private fun saveWatchlist() {
         viewModelScope.launch {
-            movieRepository.saveWatchlist(watchlist.getMovieIds())
+            saveWatchlistUseCase(watchlist.getMovieIds())
+            //movieRepository.saveWatchlist(watchlist.getMovieIds())
 
         }
     }

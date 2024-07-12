@@ -9,7 +9,7 @@ class DatastoreLocalDataSource @Inject constructor(
 ) : LocalDataSource {
 
 
-    override suspend fun getWatchlist(): Flow<Set<Int>> {
+    override suspend fun loadWatchlist(): Flow<Set<Int>> {
         return dataStore.data
     }
 
