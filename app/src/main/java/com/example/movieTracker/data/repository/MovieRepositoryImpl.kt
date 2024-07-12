@@ -6,7 +6,7 @@ import com.example.movieTracker.data.remote.dto.movie.MovieDto
 import com.example.movieTracker.data.remote.dto.movie_detail.credits.MovieCreditsDto
 import com.example.movieTracker.data.remote.dto.movie_detail.overview.MovieDetailDto
 import com.example.movieTracker.domain.repository.MovieRepository
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.withContext
@@ -17,12 +17,14 @@ class MovieRepositoryImpl @Inject constructor(
     //private val dataStore: DataStore<Set<Int>>,
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
+    //private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
+    private val dispatcher: CoroutineDispatcher
 
-    ) : MovieRepository {
+
+) : MovieRepository {
 
     override suspend fun getMovies(): List<MovieDto> {
         return remoteDataSource.getMovies()
-
     }
 
     override suspend fun getMovieDetail(movieId: Int): MovieDetailDto {
@@ -39,20 +41,19 @@ class MovieRepositoryImpl @Inject constructor(
 
     override suspend fun loadWatchlist(): Flow<Set<Int>> {
         return localDataSource.loadWatchlist()
-            .flowOn(Dispatchers.IO)
+            .flowOn(dispatcher)
     }
 
-    override suspend fun addToWatchlist(movieId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun saveWatchlist(watchlist: Set<Int>) = withContext(dispatcher) {
+        localDataSource.saveWatchlist(watchlist)
+    }
+
+    override suspend fun addToWatchlist(movieId: Int) {
         localDataSource.addToWatchlist(movieId)
     }
 
-    override suspend fun removeFromWatchlist(movieId: Int) = withContext(Dispatchers.IO) {
+    override suspend fun removeFromWatchlist(movieId: Int) {
         localDataSource.removeFromWatchlist(movieId)
-    }
-
-    override suspend fun saveWatchlist(watchlist: Set<Int>) = withContext(Dispatchers.IO) {
-        localDataSource.saveWatchlist(watchlist)
-
     }
 
 

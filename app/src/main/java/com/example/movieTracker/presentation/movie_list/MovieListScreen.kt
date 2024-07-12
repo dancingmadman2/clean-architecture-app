@@ -310,6 +310,7 @@ fun SharedTransitionScope.MovieListScreen(
                                     onItemClick = {
                                         navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
                                     },
+                                    animatedVisibilityScope = animatedVisibilityScope
                                 )
 
                             }

@@ -1,7 +1,10 @@
 package com.example.movieTracker.presentation.movie_list.components
 
 
+import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,9 +28,10 @@ import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
 @OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieListItem(
+fun SharedTransitionScope.MovieListItem(
     movie: Movie,
     onItemClick: (Movie) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     val imageUrl =
         "https://image.tmdb.org/t/p/w185${movie.posterPath}" // imageUrl movie dataclassina tasinacak
@@ -51,6 +55,15 @@ fun MovieListItem(
                 //contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "poster/${movie.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+
+                            tween(durationMillis = 1000)
+                        }
+
+                    )
 
 
             )
@@ -60,10 +73,20 @@ fun MovieListItem(
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
                             text = movie.title, modifier = Modifier
-                                .padding(top = 8.dp),
+                                .padding(top = 8.dp)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "title/${movie.id}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+
+                                        tween(durationMillis = 1000)
+                                    }
+
+                                ),
                             style = TextStyle(
                                 fontSize = 20.sp
                             )
+
                         )
                     }
                     BookmarkButton(movieId = movie.id)
@@ -75,7 +98,17 @@ fun MovieListItem(
                             100
                         )
                     }...",
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "overview/${movie.id}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+
+                                tween(durationMillis = 1000)
+                            }
+
+                        ),
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontSize = 11.sp

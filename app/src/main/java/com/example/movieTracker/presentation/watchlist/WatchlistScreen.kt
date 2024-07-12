@@ -1,5 +1,8 @@
 package com.example.movieTracker.presentation.watchlist
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -37,10 +40,11 @@ import com.example.movieTracker.presentation.movie_list.components.MovieListItem
 import com.example.movieTracker.ui.components.TopBar
 import com.valentinilk.shimmer.shimmer
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun WatchlistScreen(
+fun SharedTransitionScope.WatchlistScreen(
     navController: NavController,
-
+    animatedVisibilityScope: AnimatedVisibilityScope,
     viewModel: WatchlistViewModel = hiltViewModel()
 ) {
     val state by viewModel.state.collectAsState()
@@ -83,9 +87,13 @@ fun WatchlistScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(movies) { movie ->
-                        MovieListItem(movie = movie, onItemClick = {
-                            navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-                        })
+                        MovieListItem(
+                            movie = movie,
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            onItemClick = {
+                                navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                            },
+                        )
 
                     }
 

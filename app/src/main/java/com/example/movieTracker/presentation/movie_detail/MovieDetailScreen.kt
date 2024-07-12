@@ -233,6 +233,15 @@ fun SharedTransitionScope.MovieDetailScreen(
                             overflow = TextOverflow.Ellipsis,
                             style = TextStyle(
                                 fontSize = 15.sp
+                            ),
+                            modifier = Modifier.sharedElement(
+                                state = rememberSharedContentState(key = "overview/${movie?.id}"),
+                                animatedVisibilityScope = animatedVisibilityScope,
+                                boundsTransform = { _, _ ->
+
+                                    tween(durationMillis = 1000)
+                                }
+
                             )
                         )
                     }

@@ -92,7 +92,7 @@ class MainActivity : ComponentActivity() {
                                 composable(
                                     route = Screen.WatchlistScreen.route
                                 ) {
-                                    WatchlistScreen(navController)
+                                    WatchlistScreen(navController, animatedVisibilityScope = this)
                                     showBottomBar = true
                                 }
 

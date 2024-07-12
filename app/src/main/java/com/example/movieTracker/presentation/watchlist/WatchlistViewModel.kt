@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieTracker.common.Resource
 import com.example.movieTracker.domain.model.Movie
-import com.example.movieTracker.domain.repository.MovieRepository
 import com.example.movieTracker.domain.usecase.GetMovieByIdUseCase
 import com.example.movieTracker.domain.usecase.LoadWatchlistUseCase
 import com.example.movieTracker.domain.usecase.SaveWatchlistUseCase
@@ -23,18 +22,14 @@ import javax.inject.Inject
 
 @HiltViewModel
 class WatchlistViewModel @Inject constructor(
-    //private val dataStore: DataStore<Set<Int>>,
     private val loadWatchlistUseCase: LoadWatchlistUseCase,
     private val saveWatchlistUseCase: SaveWatchlistUseCase,
-    private val movieRepository: MovieRepository,
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
-) : ViewModel() {
+
+    ) : ViewModel() {
     private val watchlist = Watchlist()
     private val _state = MutableStateFlow(WatchlistState())
     val state: StateFlow<WatchlistState> = _state
-
-    //   private val _watchlistState = MutableStateFlow<Set<Int>>(emptySet())
-    // val watchlistState: StateFlow<Set<Int>> = _watchlistState
 
     init {
 
