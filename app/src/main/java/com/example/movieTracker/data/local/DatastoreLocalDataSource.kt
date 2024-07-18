@@ -1,42 +1,32 @@
 package com.example.movieTracker.data.local
 
 import androidx.datastore.core.DataStore
-import com.example.movieTracker.di.watchlist_datastore.addToWatchlist
-import com.example.movieTracker.di.watchlist_datastore.readData
-import com.example.movieTracker.di.watchlist_datastore.removeFromWatchlist
-import com.example.movieTracker.di.watchlist_datastore.saveData
-import kotlinx.coroutines.flow.Flow
+import androidx.datastore.preferences.core.Preferences
+import com.example.movieTracker.di.watchlist_datastore.addToPreferences
+import com.example.movieTracker.di.watchlist_datastore.loadPreferences
+import com.example.movieTracker.di.watchlist_datastore.removeFromPreferences
 import javax.inject.Inject
 
 class DatastoreLocalDataSource @Inject constructor(
-    private val dataStore: DataStore<Set<Int>>
+    private val dataStore: DataStore<Preferences>
 ) : LocalDataSource {
 
-    /*
-    override suspend fun loadWatchlist(): Flow<Set<Int>> {
-        return dataStore.loadWatchlist()
-    }
-     */
-    override suspend fun loadWatchlist(): Flow<Set<Int>> {
-        return dataStore.readData()
-    }
 
-    override suspend fun saveWatchlist(watchlist: Set<Int>) {
-        dataStore.saveData(watchlist)
+    override suspend fun loadWatchlist(): Set<Int> {
+        return dataStore.loadPreferences()
     }
 
     override suspend fun addToWatchlist(movieId: Int) {
-        dataStore.addToWatchlist(movieId)
+        dataStore.addToPreferences(movieId)
     }
 
     override suspend fun removeFromWatchlist(movieId: Int) {
-        dataStore.removeFromWatchlist(movieId)
+        dataStore.removeFromPreferences(movieId)
     }
 
-    /*
     override suspend fun saveWatchlist(watchlist: Set<Int>) {
-        dataStore.saveWatchlist(watchlist)
-    }*/
+        return dataStore.removeFromPreferences(0)
+    }
 
 
 }

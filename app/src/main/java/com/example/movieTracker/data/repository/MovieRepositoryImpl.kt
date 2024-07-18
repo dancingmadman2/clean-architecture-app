@@ -7,9 +7,6 @@ import com.example.movieTracker.data.remote.dto.movie_detail.credits.MovieCredit
 import com.example.movieTracker.data.remote.dto.movie_detail.overview.MovieDetailDto
 import com.example.movieTracker.domain.repository.MovieRepository
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 class MovieRepositoryImpl @Inject constructor(
@@ -39,12 +36,11 @@ class MovieRepositoryImpl @Inject constructor(
         return getMovies().find { it.id == movieId }
     }
 
-    override suspend fun loadWatchlist(): Flow<Set<Int>> {
+    override suspend fun loadWatchlist(): Set<Int> {
         return localDataSource.loadWatchlist()
-            .flowOn(dispatcher)
     }
 
-    override suspend fun saveWatchlist(watchlist: Set<Int>) = withContext(dispatcher) {
+    override suspend fun saveWatchlist(watchlist: Set<Int>) {
         localDataSource.saveWatchlist(watchlist)
     }
 

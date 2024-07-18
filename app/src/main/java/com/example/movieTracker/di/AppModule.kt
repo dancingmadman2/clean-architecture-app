@@ -1,6 +1,7 @@
 package com.example.movieTracker.di
 
 import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
 import com.example.movieTracker.common.Constants
 import com.example.movieTracker.data.local.DatastoreLocalDataSource
 import com.example.movieTracker.data.local.LocalDataSource
@@ -60,7 +61,7 @@ object AppModule {
     @Provides
     @Singleton
     fun provideLocalDataSource(
-        dataStore: DataStore<Set<Int>>
+        dataStore: DataStore<Preferences>
     ): LocalDataSource {
         return DatastoreLocalDataSource(dataStore)
     }

@@ -5,8 +5,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.movieTracker.common.Resource
 import com.example.movieTracker.domain.model.Movie
+import com.example.movieTracker.domain.usecase.AddToWatchlistUseCase
 import com.example.movieTracker.domain.usecase.GetMovieByIdUseCase
 import com.example.movieTracker.domain.usecase.LoadWatchlistUseCase
+import com.example.movieTracker.domain.usecase.RemoveFromWatchlistUseCase
 import com.example.movieTracker.domain.usecase.SaveWatchlistUseCase
 import com.example.movieTracker.presentation.watchlist.components.Watchlist
 import com.example.movieTracker.presentation.watchlist.components.WatchlistState
@@ -24,6 +26,8 @@ import javax.inject.Inject
 class WatchlistViewModel @Inject constructor(
     private val loadWatchlistUseCase: LoadWatchlistUseCase,
     private val saveWatchlistUseCase: SaveWatchlistUseCase,
+    private val addToWatchlistUseCase: AddToWatchlistUseCase,
+    private val removeFromWatchlistUseCase: RemoveFromWatchlistUseCase,
     private val getMovieByIdUseCase: GetMovieByIdUseCase,
 
     ) : ViewModel() {
@@ -34,7 +38,7 @@ class WatchlistViewModel @Inject constructor(
     init {
 
         viewModelScope.launch {
-            loadWatchlistUseCase()?.let { storedSet ->
+            loadWatchlistUseCase().let { storedSet ->
                 //   _watchlistState.value = storedSet
                 storedSet.forEach { movieId ->
                     watchlist.addMovie(movieId)
@@ -89,7 +93,11 @@ class WatchlistViewModel @Inject constructor(
                 watchlistMovieIds = watchlist.getMovieIds()
             )
         }
-        saveWatchlist()
+        viewModelScope.launch {
+            addToWatchlistUseCase(movieId)
+        }
+        //saveWatchlist()
+        //addToWatchlist(movieId)
 
         Log.d("watchlist", "state movie_ids: ${_state.value.watchlistMovieIds}")
     }
@@ -102,7 +110,10 @@ class WatchlistViewModel @Inject constructor(
                 watchlistMovieIds = watchlist.getMovieIds()
             )
         }
-        saveWatchlist()
+        viewModelScope.launch {
+            removeFromWatchlistUseCase(movieId)
+        }
+        //saveWatchlist()
         Log.d("watchlist", "state movie_ids: ${_state.value.watchlistMovieIds}")
     }
 

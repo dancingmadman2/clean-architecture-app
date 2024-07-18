@@ -1,36 +1,34 @@
 package com.example.movieTracker.di.watchlist_datastore
 
 import androidx.datastore.core.DataStore
-import kotlinx.coroutines.flow.Flow
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringSetPreferencesKey
+import kotlinx.coroutines.flow.first
 
-
-fun DataStore<Set<Int>>.loadWatchlist(): Flow<Set<Int>> {
-    return data
-}
-
-suspend fun DataStore<Set<Int>>.saveWatchlist(watchlist: Set<Int>) {
-    updateData {
-        watchlist
-    }
-}
-
-suspend fun DataStore<Set<Int>>.removeFromWatchlist(movieId: Int) {
-    updateData { currentSet ->
-        currentSet - movieId
-    }
-}
-
-suspend fun DataStore<Set<Int>>.addToWatchlist(movieId: Int) {
-    updateData { currentSet ->
-        currentSet + movieId
-    }
-}
+val WATCHLIST_KEY = stringSetPreferencesKey("watchlist")
 
 suspend fun <T> DataStore<T>.saveData(data: T) {
     updateData { data }
 }
 
-fun <T> DataStore<T>.readData(): Flow<T> {
-    return data
+suspend fun DataStore<Preferences>.loadPreferences(): Set<Int> {
+    return data.first()[WATCHLIST_KEY]?.map {
+        it.toInt()
+    }?.toSet() ?: emptySet()
 }
 
+
+suspend fun DataStore<Preferences>.removeFromPreferences(movieId: Int) {
+    edit { preferences ->
+        val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
+        preferences[WATCHLIST_KEY] = currentWatchlist - movieId.toString()
+    }
+}
+
+suspend fun DataStore<Preferences>.addToPreferences(movieId: Int) {
+    edit { preferences ->
+        val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
+        preferences[WATCHLIST_KEY] = currentWatchlist + movieId.toString()
+    }
+}
