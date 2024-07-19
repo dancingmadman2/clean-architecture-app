@@ -19,7 +19,7 @@ import kotlinx.coroutines.SupervisorJob
 import javax.inject.Singleton
 
 
-private const val USER_PREFERENCES = "watchlist_preferences"
+private const val PREFERENCES = "watchlist_preferences"
 
 @InstallIn(SingletonComponent::class)
 @Module
@@ -45,9 +45,9 @@ object DataStoreModule {
             corruptionHandler = ReplaceFileCorruptionHandler(
                 produceNewData = { emptyPreferences() }
             ),
-            migrations = listOf(SharedPreferencesMigration(appContext, USER_PREFERENCES)),
+            migrations = listOf(SharedPreferencesMigration(appContext, PREFERENCES)),
             scope = CoroutineScope(Dispatchers.IO + SupervisorJob()),
-            produceFile = { appContext.preferencesDataStoreFile(USER_PREFERENCES) }
+            produceFile = { appContext.preferencesDataStoreFile(PREFERENCES) }
         )
     }
 }

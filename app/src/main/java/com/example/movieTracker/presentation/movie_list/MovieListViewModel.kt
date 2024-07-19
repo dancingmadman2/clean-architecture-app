@@ -67,10 +67,11 @@ class MovieListViewModel @Inject constructor(
         getMovies()
     }
 
+
     fun onSearchTextChanged(text: String) {
-        Log.d("onsearchtext", " value: $text")
+
         _searchText.value = text
-        Log.d("onsearchtext", "_searchText  ${_searchText.value}")
+
     }
 
     private fun getMovies() {

@@ -3,14 +3,8 @@ package com.example.movieTracker.di.watchlist_datastore
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
-import androidx.datastore.preferences.core.stringSetPreferencesKey
+import com.example.movieTracker.data.local.WATCHLIST_KEY
 import kotlinx.coroutines.flow.first
-
-val WATCHLIST_KEY = stringSetPreferencesKey("watchlist")
-
-suspend fun <T> DataStore<T>.saveData(data: T) {
-    updateData { data }
-}
 
 suspend fun DataStore<Preferences>.loadPreferences(): Set<Int> {
     return data.first()[WATCHLIST_KEY]?.map {
@@ -19,16 +13,55 @@ suspend fun DataStore<Preferences>.loadPreferences(): Set<Int> {
 }
 
 
-suspend fun DataStore<Preferences>.removeFromPreferences(movieId: Int) {
+suspend fun <T> DataStore<Preferences>.removeFromPreferences(movieId: T) {
     edit { preferences ->
         val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
         preferences[WATCHLIST_KEY] = currentWatchlist - movieId.toString()
     }
 }
 
-suspend fun DataStore<Preferences>.addToPreferences(movieId: Int) {
+suspend fun <T> DataStore<Preferences>.addToPreferences(movieId: T) {
     edit { preferences ->
         val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
         preferences[WATCHLIST_KEY] = currentWatchlist + movieId.toString()
     }
 }
+
+suspend fun <T> DataStore<Preferences>.saveValue(
+    key: Preferences.Key<Set<String>>,
+    value: T
+) {
+    edit { preferences ->
+        val currentSet = preferences[key] ?: emptySet()
+        preferences[key] = currentSet + value.toString()
+    }
+}
+
+suspend fun <T> DataStore<Preferences>.removeValue(
+    key: Preferences.Key<Set<String>>,
+    value: T
+) {
+    edit { preferences ->
+        val currentSet = preferences[key] ?: emptySet()
+        preferences[key] = currentSet - value.toString()
+    }
+}
+/*
+
+suspend inline fun <T> DataStore<Preferences>.saveValue(
+    key: Preferences.Key<Set<String>>,
+    value: T, crossinline onSuccess: () -> Unit, crossinline onError: (Exception) -> Unit
+) {
+    edit { preferences ->
+        try {
+            val currentSet = preferences[key] ?: emptySet()
+            preferences[key] = currentSet + value.toString()
+            onSuccess()
+
+        } catch (e: Exception) {
+            onError(e)
+        }
+    }
+}
+
+*/
