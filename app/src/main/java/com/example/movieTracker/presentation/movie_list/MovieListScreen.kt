@@ -83,6 +83,32 @@ fun SharedTransitionScope.MovieListScreen(
     val lazyGridState = rememberLazyGridState()
     val lazyColumnState = rememberLazyListState()
 
+
+    /*
+    LaunchedEffect(lazyGridState) {
+        snapshotFlow { lazyGridState.firstVisibleItemScrollOffset }
+            .collect { value ->
+                showSearchBar = (value < previousOffset && (previousOffset - value) >= 25)
+                if (value == 0) showSearchBar = true
+                previousOffset = value
+            }
+    }
+    LaunchedEffect(lazyColumnState) {
+        snapshotFlow {
+            lazyColumnState.firstVisibleItemScrollOffset
+        }
+            .distinctUntilChanged()
+            .collect { value ->
+                showSearchBar =
+                    (value < previousOffset && (previousOffset - value) >= 25) || value == 0
+                previousOffset = value
+            }
+    }
+     */
+
+
+    val threshold = 25
+
     val showSearchBar by remember {
         var previousScrollOffset = 0
         derivedStateOf {
@@ -95,34 +121,14 @@ fun SharedTransitionScope.MovieListScreen(
             val scrollingUp = currentScrollOffset < previousScrollOffset
             previousScrollOffset = currentScrollOffset
 
-            if (scrollingUp) {
-                true
-            } else {
-                if (!checkedState) {
-                    lazyGridState.firstVisibleItemScrollOffset <= 0
-                } else {
-                    lazyColumnState.firstVisibleItemScrollOffset <= 0
-                }
+            when {
+                currentScrollOffset <= threshold -> true
+                scrollingUp -> true
+                !checkedState -> lazyGridState.firstVisibleItemScrollOffset <= threshold
+                else -> lazyColumnState.firstVisibleItemScrollOffset <= threshold
             }
         }
     }
-
-    /*
-    val showAppBar by remember {
-        derivedStateOf {
-            if (!checkedState) {
-
-                lazyGridState.firstVisibleItemScrollOffset <= 0
-            } else {
-                lazyColumnState.firstVisibleItemScrollOffset <= 0
-            }
-
-        }
-    }
-     */
-
-
-
 
     Scaffold(
         topBar = {
@@ -223,7 +229,7 @@ fun SharedTransitionScope.MovieListScreen(
                         state = lazyGridState
                     ) {
                         if (state.isLoading) {
-                            items(24) {
+                            items(12) {
                                 Box(
                                     modifier = Modifier
                                         .height(200.dp)
@@ -270,11 +276,14 @@ fun SharedTransitionScope.MovieListScreen(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         state = lazyColumnState
+
                     ) {
+
                         if (state.isLoading) {
-                            items(24) {
+                            items(12) {
                                 Box(
                                     modifier = Modifier
                                         .height(100.dp)
@@ -317,6 +326,8 @@ fun SharedTransitionScope.MovieListScreen(
 
 
                         }
+
+
                     }
                 }
 
@@ -336,4 +347,5 @@ fun SharedTransitionScope.MovieListScreen(
         }
 
     }
+
 }
