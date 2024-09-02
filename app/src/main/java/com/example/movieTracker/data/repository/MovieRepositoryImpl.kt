@@ -40,16 +40,17 @@ class MovieRepositoryImpl @Inject constructor(
         return localDataSource.loadWatchlist()
     }
 
-    override suspend fun saveWatchlist(watchlist: Set<Int>) {
-        localDataSource.saveWatchlist(watchlist)
-    }
-
     override suspend fun addToWatchlist(movieId: Int) {
         localDataSource.addToWatchlist(movieId)
     }
 
     override suspend fun removeFromWatchlist(movieId: Int) {
         localDataSource.removeFromWatchlist(movieId)
+    }
+
+    // depreciated
+    override suspend fun saveWatchlist(watchlist: Set<Int>) {
+        localDataSource.saveWatchlist(watchlist)
     }
 
 

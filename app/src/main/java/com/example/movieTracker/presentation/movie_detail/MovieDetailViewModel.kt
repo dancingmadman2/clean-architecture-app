@@ -1,6 +1,8 @@
 package com.example.movieTracker.presentation.movie_detail
 
 import android.util.Log
+import androidx.compose.foundation.ScrollState
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -13,6 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -25,11 +28,25 @@ class MovieDetailViewModel @Inject constructor(
     private val _state = MutableStateFlow(MovieDetailState())
     val state: StateFlow<MovieDetailState> = _state
 
+    private val _imageAlpha = MutableStateFlow(1f)
+
+
     init {
         val movieIdString = savedStateHandle.get<String>(Constants.MOVIE_ID)
         movieIdString?.toIntOrNull()?.let { movieId ->
             Log.d("MOVIE_ID", "Movie Id: $movieId")
             getMovieDetail(movieId)
+        }
+    }
+
+
+    fun onScrollStateChanged(scrollState: ScrollState) {
+        viewModelScope.launch {
+            snapshotFlow { scrollState.value }
+                .collect { offset ->
+                    val newAlpha = maxOf(0f, 1f - offset.toFloat() / 1000f)
+                    _imageAlpha.value = newAlpha
+                }
         }
     }
 

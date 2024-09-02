@@ -4,6 +4,9 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.AnimatedVisibilityScope
 import androidx.compose.animation.ExperimentalSharedTransitionApi
 import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -83,8 +86,33 @@ fun SharedTransitionScope.MovieListScreen(
     val lazyGridState = rememberLazyGridState()
     val lazyColumnState = rememberLazyListState()
 
+
+    val threshold = 125
+
+
+    val isScrollingUp =
+        remember { derivedStateOf { lazyColumnState.firstVisibleItemScrollOffset < 0 } }
+    var previousIndex by remember { mutableStateOf(0) }
+    var previousScrollOffset by remember { mutableStateOf(0) }
+
+    /*
+    var isBoxVisible by remember { mutableStateOf(true) }
+    LaunchedEffect(lazyColumnState) {
+        snapshotFlow { lazyColumnState.firstVisibleItemIndex to lazyColumnState.firstVisibleItemScrollOffset }
+            .distinctUntilChanged()
+            .collect { (index, scrollOffset) ->
+                if (index != previousIndex) {
+                    isBoxVisible = index < previousIndex
+                } else {
+                    isBoxVisible = scrollOffset <= previousScrollOffset
+                }
+                previousIndex = index
+                previousScrollOffset = scrollOffset
+           }
+     */
+
+
     val showSearchBar by remember {
-        var previousScrollOffset = 0
         derivedStateOf {
             val currentScrollOffset = if (!checkedState) {
                 lazyGridState.firstVisibleItemScrollOffset
@@ -92,34 +120,22 @@ fun SharedTransitionScope.MovieListScreen(
                 lazyColumnState.firstVisibleItemScrollOffset
             }
 
-            val scrollingUp = currentScrollOffset < previousScrollOffset
-            previousScrollOffset = currentScrollOffset
-
-            if (scrollingUp) {
-                true
+            val currentIndex = if (!checkedState) {
+                lazyGridState.firstVisibleItemIndex
             } else {
-                if (!checkedState) {
-                    lazyGridState.firstVisibleItemScrollOffset <= 0
-                } else {
-                    lazyColumnState.firstVisibleItemScrollOffset <= 0
-                }
+                lazyColumnState.firstVisibleItemIndex
+            }
+
+            if (currentIndex != previousIndex) {
+                currentIndex < previousIndex
+            } else {
+                currentScrollOffset <= previousScrollOffset
+            }.also {
+                previousIndex = currentIndex
+                previousScrollOffset = currentScrollOffset
             }
         }
     }
-
-    /*
-    val showAppBar by remember {
-        derivedStateOf {
-            if (!checkedState) {
-
-                lazyGridState.firstVisibleItemScrollOffset <= 0
-            } else {
-                lazyColumnState.firstVisibleItemScrollOffset <= 0
-            }
-
-        }
-    }
-     */
 
 
 
@@ -147,7 +163,11 @@ fun SharedTransitionScope.MovieListScreen(
 
 
         ) {
-            AnimatedVisibility(showSearchBar) {
+            AnimatedVisibility(
+                showSearchBar,
+                enter = slideInVertically(animationSpec = tween(durationMillis = 200)),
+                exit = slideOutVertically(animationSpec = tween(durationMillis = 200)),
+            ) {
                 TextField(value = searchText,
                     onValueChange = { newValue ->
                         viewModel.onSearchTextChanged(newValue)
@@ -223,7 +243,7 @@ fun SharedTransitionScope.MovieListScreen(
                         state = lazyGridState
                     ) {
                         if (state.isLoading) {
-                            items(24) {
+                            items(12) {
                                 Box(
                                     modifier = Modifier
                                         .height(200.dp)
@@ -270,11 +290,14 @@ fun SharedTransitionScope.MovieListScreen(
                 } else {
                     LazyColumn(
                         contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier
+                            .fillMaxSize(),
                         state = lazyColumnState
+
                     ) {
+
                         if (state.isLoading) {
-                            items(24) {
+                            items(12) {
                                 Box(
                                     modifier = Modifier
                                         .height(100.dp)
@@ -317,6 +340,8 @@ fun SharedTransitionScope.MovieListScreen(
 
 
                         }
+
+
                     }
                 }
 
@@ -336,4 +361,5 @@ fun SharedTransitionScope.MovieListScreen(
         }
 
     }
+
 }

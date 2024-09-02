@@ -24,20 +24,6 @@ private const val PREFERENCES = "watchlist_preferences"
 @InstallIn(SingletonComponent::class)
 @Module
 object DataStoreModule {
-    /*
-        @Singleton
-        @Provides
-        fun provideProtoDataStore(
-            @ApplicationContext appContext: Context
-        ): DataStore<Set<Int>> {
-            return DataStoreFactory.create(
-                serializer = WatchlistSerializer,
-                produceFile = { appContext.dataStoreFile("watchlist.pb") },
-                corruptionHandler = null,
-                scope = CoroutineScope(Dispatchers.IO)
-            )
-        }
-     */
     @Singleton
     @Provides
     fun providePreferencesDataStore(@ApplicationContext appContext: Context): DataStore<Preferences> {

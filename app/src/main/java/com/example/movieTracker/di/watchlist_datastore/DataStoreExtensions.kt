@@ -12,21 +12,6 @@ suspend fun DataStore<Preferences>.loadPreferences(): Set<Int> {
     }?.toSet() ?: emptySet()
 }
 
-
-suspend fun <T> DataStore<Preferences>.removeFromPreferences(movieId: T) {
-    edit { preferences ->
-        val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
-        preferences[WATCHLIST_KEY] = currentWatchlist - movieId.toString()
-    }
-}
-
-suspend fun <T> DataStore<Preferences>.addToPreferences(movieId: T) {
-    edit { preferences ->
-        val currentWatchlist = preferences[WATCHLIST_KEY] ?: emptySet()
-        preferences[WATCHLIST_KEY] = currentWatchlist + movieId.toString()
-    }
-}
-
 suspend fun <T> DataStore<Preferences>.saveValue(
     key: Preferences.Key<Set<String>>,
     value: T
@@ -46,22 +31,3 @@ suspend fun <T> DataStore<Preferences>.removeValue(
         preferences[key] = currentSet - value.toString()
     }
 }
-/*
-
-suspend inline fun <T> DataStore<Preferences>.saveValue(
-    key: Preferences.Key<Set<String>>,
-    value: T, crossinline onSuccess: () -> Unit, crossinline onError: (Exception) -> Unit
-) {
-    edit { preferences ->
-        try {
-            val currentSet = preferences[key] ?: emptySet()
-            preferences[key] = currentSet + value.toString()
-            onSuccess()
-
-        } catch (e: Exception) {
-            onError(e)
-        }
-    }
-}
-
-*/

@@ -7,7 +7,6 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -15,6 +14,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.graphics.Color
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.movieTracker.presentation.watchlist.WatchlistViewModel
 
@@ -22,7 +22,7 @@ import com.example.movieTracker.presentation.watchlist.WatchlistViewModel
 fun BookmarkButton(
     watchlistViewModel: WatchlistViewModel = hiltViewModel(),
     movieId: Int,
-    showText: Boolean = false,
+    isOnAppbar: Boolean = false,
 ) {
 
 
@@ -59,10 +59,9 @@ fun BookmarkButton(
         }) {
             Icon(
                 imageVector = if (isBookmarked) Icons.Filled.Bookmark else Icons.Filled.BookmarkBorder,
-                contentDescription = ""
+                contentDescription = "",
+                tint = if (isOnAppbar) Color.White else Color.Black
             )
         }
-        if (showText)
-            Text(text = "Add to watchlist")
     }
 }
