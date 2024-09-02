@@ -30,9 +30,13 @@ import androidx.compose.foundation.lazy.grid.rememberLazyGridState
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.pullrefresh.PullRefreshIndicator
+import androidx.compose.material.pullrefresh.pullRefresh
+import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -67,7 +71,7 @@ import com.example.movieTracker.ui.components.TopBar
 import com.valentinilk.shimmer.shimmer
 
 
-@OptIn(ExperimentalSharedTransitionApi::class)
+@OptIn(ExperimentalSharedTransitionApi::class, ExperimentalMaterialApi::class)
 @Composable
 fun SharedTransitionScope.MovieListScreen(
     navController: NavController,
@@ -86,6 +90,10 @@ fun SharedTransitionScope.MovieListScreen(
     val lazyGridState = rememberLazyGridState()
     val lazyColumnState = rememberLazyListState()
 
+    val pullRefreshState = rememberPullRefreshState(
+        refreshing = state.isLoading,
+        onRefresh = viewModel::refresh
+    )
 
     val threshold = 125
 
@@ -156,209 +164,218 @@ fun SharedTransitionScope.MovieListScreen(
 
     ) { innerPadding ->
 
-        Column(
+        Box(
             modifier = Modifier
-                .padding(innerPadding)
                 .fillMaxSize()
-
-
+                .padding(innerPadding)
+                .pullRefresh(pullRefreshState)
         ) {
-            AnimatedVisibility(
-                showSearchBar,
-                enter = slideInVertically(animationSpec = tween(durationMillis = 200)),
-                exit = slideOutVertically(animationSpec = tween(durationMillis = 200)),
-            ) {
-                TextField(value = searchText,
-                    onValueChange = { newValue ->
-                        viewModel.onSearchTextChanged(newValue)
-                    },
 
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp)
-                        .height(75.dp)
-                        .border(
-                            width = 2.dp,
-                            brush = SolidColor(MaterialTheme.colorScheme.primary),
-                            shape = RoundedCornerShape(6.dp)
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+            ) {
+
+                AnimatedVisibility(
+                    true,
+                    enter = slideInVertically(animationSpec = tween(durationMillis = 200)),
+                    exit = slideOutVertically(animationSpec = tween(durationMillis = 200)),
+                ) {
+                    TextField(value = searchText,
+                        onValueChange = { newValue ->
+                            viewModel.onSearchTextChanged(newValue)
+                        },
+
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(16.dp)
+                            .height(75.dp)
+                            .border(
+                                width = 2.dp,
+                                brush = SolidColor(MaterialTheme.colorScheme.primary),
+                                shape = RoundedCornerShape(6.dp)
+                            ),
+
+                        leadingIcon = {
+                            Icon(
+                                imageVector = Icons.Filled.Search,
+                                contentDescription = "search icon",
+                                tint = Color.Gray,
+                            )
+
+                        },
+                        trailingIcon = {
+                            if (searchText.isNotEmpty()) {
+                                IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
+                                    Icon(
+                                        imageVector = Icons.Filled.Clear,
+                                        contentDescription = "clear icon",
+                                        tint = Color.Gray
+                                    )
+
+                                }
+                            }
+                        },
+
+
+                        colors = TextFieldDefaults.colors(
+                            unfocusedContainerColor = Color.White,
+                            focusedContainerColor = Color.White,
+                            cursorColor = MaterialTheme.colorScheme.primary,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.Transparent
+
                         ),
 
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "search icon",
-                            tint = Color.Gray,
+                        shape = RoundedCornerShape(6.dp),
+                        singleLine = true,
+                        placeholder = { Text(text = "Search") })
+                }
+                Box(modifier = Modifier.padding(16.dp)) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Switch(
+                            checked = checkedState,
+                            onCheckedChange = { checkedState = it },
                         )
+                        Spacer(modifier = Modifier.width(12.5.dp))
+                        Text(text = if (checkedState) "List" else "Grid")
 
-                    },
-                    trailingIcon = {
-                        if (searchText.isNotEmpty()) {
-                            IconButton(onClick = { viewModel.onSearchTextChanged("") }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Clear,
-                                    contentDescription = "clear icon",
-                                    tint = Color.Gray
-                                )
-
-                            }
-                        }
-                    },
-
-
-                    colors = TextFieldDefaults.colors(
-                        unfocusedContainerColor = Color.White,
-                        focusedContainerColor = Color.White,
-                        cursorColor = MaterialTheme.colorScheme.primary,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent
-
-                    ),
-
-                    shape = RoundedCornerShape(6.dp),
-                    singleLine = true,
-                    placeholder = { Text(text = "Search") })
-            }
-            Box(modifier = Modifier.padding(16.dp)) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Switch(
-                        checked = checkedState,
-                        onCheckedChange = { checkedState = it },
-                    )
-                    Spacer(modifier = Modifier.width(12.5.dp))
-                    Text(text = if (checkedState) "List" else "Grid")
-
+                    }
                 }
-            }
-            if (isSearching) {
-                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                    CircularProgressIndicator()
-                }
-            } else {
 
-                if (!checkedState) {
-                    LazyVerticalGrid(
-                        columns = GridCells.Fixed(3),
-                        contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier.fillMaxSize(),
-                        state = lazyGridState
-                    ) {
-                        if (state.isLoading) {
-                            items(12) {
-                                Box(
-                                    modifier = Modifier
-                                        .height(200.dp)
-                                        .padding(16.dp)
-                                        .clip(shape = RoundedCornerShape(6.dp))
-                                        .shimmer()
-                                        .background(Color.LightGray)
-                                )
-                            }
-                        } else if (filteredMovies.isEmpty()) {
-
-                            item {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.no_result),
-                                        contentDescription = "",
-                                        modifier = Modifier.size(200.dp),
-                                    )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(text = "Movie not Found", color = Color.Gray)
-                                }
-                            }
-
-                        } else {
-                            items(filteredMovies) { movie ->
-                                MovieListGridItem(
-                                    movie = movie,
-                                    onItemClick = {
-                                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-
-                                    },
-                                    animatedVisibilityScope = animatedVisibilityScope
-                                )
-
-                            }
-
-
-                        }
+                if (isSearching) {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        CircularProgressIndicator()
                     }
                 } else {
-                    LazyColumn(
-                        contentPadding = PaddingValues(16.dp),
-                        modifier = Modifier
-                            .fillMaxSize(),
-                        state = lazyColumnState
+                    if (!checkedState) {
+                        LazyVerticalGrid(
+                            columns = GridCells.Fixed(3),
+                            contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier.fillMaxSize(),
+                            state = lazyGridState
+                        ) {
 
-                    ) {
-
-                        if (state.isLoading) {
-                            items(12) {
-                                Box(
-                                    modifier = Modifier
-                                        .height(100.dp)
-                                        .fillMaxWidth()
-                                        .padding(16.dp)
-                                        .clip(shape = RoundedCornerShape(6.dp))
-                                        .shimmer()
-                                        .background(Color.LightGray)
-                                )
-                            }
-                        } else if (filteredMovies.isEmpty()) {
-
-                            item {
-                                Column(
-                                    modifier = Modifier.fillMaxSize(),
-                                    verticalArrangement = Arrangement.Center,
-                                    horizontalAlignment = Alignment.CenterHorizontally
-                                ) {
-                                    Image(
-                                        painter = painterResource(id = R.drawable.no_result),
-                                        contentDescription = "",
-                                        modifier = Modifier.size(200.dp),
+                            if (state.isLoading) {
+                                items(12) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(200.dp)
+                                            .padding(16.dp)
+                                            .clip(shape = RoundedCornerShape(6.dp))
+                                            .shimmer()
+                                            .background(Color.LightGray)
                                     )
-                                    Spacer(modifier = Modifier.height(16.dp))
-                                    Text(text = "Movie not Found", color = Color.Gray)
+                                }
+                            } else if (filteredMovies.isEmpty()) {
+
+                                item {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.no_result),
+                                            contentDescription = "",
+                                            modifier = Modifier.size(200.dp),
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(text = "Movie not Found", color = Color.Gray)
+                                    }
+                                }
+
+                            } else {
+                                items(filteredMovies) { movie ->
+                                    MovieListGridItem(
+                                        movie = movie,
+                                        onItemClick = {
+                                            navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+
+                                        },
+                                        animatedVisibilityScope = animatedVisibilityScope
+                                    )
                                 }
                             }
+                        }
+                    } else {
+                        LazyColumn(
+                            contentPadding = PaddingValues(16.dp),
+                            modifier = Modifier
+                                .fillMaxSize(),
+                            state = lazyColumnState
 
-                        } else {
-                            items(filteredMovies) { movie ->
-                                MovieListItem(
-                                    movie = movie,
-                                    onItemClick = {
-                                        navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
-                                    },
-                                    animatedVisibilityScope = animatedVisibilityScope
-                                )
+                        ) {
 
+                            if (state.isLoading) {
+                                items(12) {
+                                    Box(
+                                        modifier = Modifier
+                                            .height(100.dp)
+                                            .fillMaxWidth()
+                                            .padding(16.dp)
+                                            .clip(shape = RoundedCornerShape(6.dp))
+                                            .shimmer()
+                                            .background(Color.LightGray)
+                                    )
+                                }
+                            } else if (filteredMovies.isEmpty()) {
+
+                                item {
+                                    Column(
+                                        modifier = Modifier.fillMaxSize(),
+                                        verticalArrangement = Arrangement.Center,
+                                        horizontalAlignment = Alignment.CenterHorizontally
+                                    ) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.no_result),
+                                            contentDescription = "",
+                                            modifier = Modifier.size(200.dp),
+                                        )
+                                        Spacer(modifier = Modifier.height(16.dp))
+                                        Text(text = "Movie not Found", color = Color.Gray)
+                                    }
+                                }
+
+                            } else {
+                                items(filteredMovies) { movie ->
+                                    MovieListItem(
+                                        movie = movie,
+                                        onItemClick = {
+                                            navController.navigate(Screen.MovieDetailScreen.route + "/${movie.id}")
+                                        },
+                                        animatedVisibilityScope = animatedVisibilityScope
+                                    )
+
+                                }
                             }
 
 
                         }
-
-
                     }
                 }
 
-
             }
-            if (state.error.isNotBlank()) {
-                Text(
-                    text = state.error,
-                    color = Color.Red,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 20.dp)
+            PullRefreshIndicator(
+                refreshing = state.isLoading,
+                state = pullRefreshState,
+                modifier = Modifier.align(Alignment.TopCenter),
+            )
 
-                )
-            }
         }
+
+        if (state.error.isNotBlank()) {
+            Text(
+                text = state.error,
+                color = Color.Red,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp)
+
+            )
+        }
+
 
     }
 

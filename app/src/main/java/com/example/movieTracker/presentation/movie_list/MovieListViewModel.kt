@@ -74,6 +74,10 @@ class MovieListViewModel @Inject constructor(
 
     }
 
+    fun refresh() {
+        getMovies()
+    }
+
     private fun getMovies() {
         getMoviesUseCase().onEach { result ->
             when (result) {
