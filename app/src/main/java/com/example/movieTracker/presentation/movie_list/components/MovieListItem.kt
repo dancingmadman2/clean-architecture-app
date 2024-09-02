@@ -1,6 +1,10 @@
 package com.example.movieTracker.presentation.movie_list.components
 
 
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,13 +24,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
-import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieListItem(
+fun SharedTransitionScope.MovieListItem(
     movie: Movie,
-    onItemClick: (Movie) -> Unit
+    onItemClick: (Movie) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
+    val imageUrl =
+        "https://image.tmdb.org/t/p/w185${movie.posterPath}" // imageUrl movie dataclassina tasinacak
 
     Column(
         modifier = Modifier
@@ -37,16 +45,26 @@ fun MovieListItem(
 
 
     ) {
-        val imageUrl = "https://image.tmdb.org/t/p/w185${movie.posterPath}"
 
 
         Row() {
+
             AsyncImage(
                 model = imageUrl,
                 contentDescription = "Movie Poster",
                 //contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "poster/${movie.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+
+                            tween(durationMillis = 1000)
+                        }
+
+                    )
+
 
             )
             Spacer(modifier = Modifier.width(20.dp))
@@ -54,13 +72,24 @@ fun MovieListItem(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Column(modifier = Modifier.weight(1f)) {
                         Text(
-                            text = movie.title, modifier = Modifier.padding(top = 8.dp),
+                            text = movie.title, modifier = Modifier
+                                .padding(top = 8.dp)
+                                .sharedElement(
+                                    state = rememberSharedContentState(key = "title/${movie.id}"),
+                                    animatedVisibilityScope = animatedVisibilityScope,
+                                    boundsTransform = { _, _ ->
+
+                                        tween(durationMillis = 1000)
+                                    }
+
+                                ),
                             style = TextStyle(
                                 fontSize = 20.sp
                             )
+
                         )
                     }
-                    BookmarkedButton(movieId = movie.id)
+                    BookmarkButton(movieId = movie.id)
                 }
                 Text(
                     text = if (movie.overview.length < 100) movie.overview else "${
@@ -69,7 +98,17 @@ fun MovieListItem(
                             100
                         )
                     }...",
-                    modifier = Modifier.padding(top = 8.dp),
+                    modifier = Modifier
+                        .padding(top = 8.dp)
+                        .sharedElement(
+                            state = rememberSharedContentState(key = "overview/${movie.id}"),
+                            animatedVisibilityScope = animatedVisibilityScope,
+                            boundsTransform = { _, _ ->
+
+                                tween(durationMillis = 1000)
+                            }
+
+                        ),
                     overflow = TextOverflow.Ellipsis,
                     style = TextStyle(
                         fontSize = 11.sp

@@ -8,7 +8,6 @@ import com.example.movieTracker.domain.model.Movie
 import com.example.movieTracker.domain.usecase.GetMoviesUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.FlowPreview
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +34,7 @@ class MovieListViewModel @Inject constructor(
 
     private val _isSearching = MutableStateFlow(false)
     val isSearching: StateFlow<Boolean> = _isSearching.asStateFlow()
+
 
     // private val _movies = MutableStateFlow<List<Movie>>(emptyList())
 
@@ -67,10 +67,15 @@ class MovieListViewModel @Inject constructor(
         getMovies()
     }
 
+
     fun onSearchTextChanged(text: String) {
-        Log.d("onsearchtext", " value: $text")
+
         _searchText.value = text
-        Log.d("onsearchtext", "_searchText  ${_searchText.value}")
+
+    }
+
+    fun refresh() {
+        getMovies()
     }
 
     private fun getMovies() {
@@ -78,7 +83,7 @@ class MovieListViewModel @Inject constructor(
             when (result) {
                 is Resource.Success -> {
                     val movies = result.data ?: emptyList()
-                    delay(500L)
+
                     _state.update {
                         it.copy(
                             isLoading = false,
@@ -93,7 +98,7 @@ class MovieListViewModel @Inject constructor(
                 is Resource.Error -> {
                     _state.update {
                         it.copy(
-
+                            movies = emptyList(),
                             error = result.message ?: "Unexpected error has occurred.",
                             isLoading = false,
                         )

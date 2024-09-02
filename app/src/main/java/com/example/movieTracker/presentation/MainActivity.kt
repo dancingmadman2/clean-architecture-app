@@ -4,6 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -28,6 +30,7 @@ import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalSharedTransitionApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,6 +45,7 @@ class MainActivity : ComponentActivity() {
                 var selectedIndex by remember { mutableIntStateOf(0) }
                 val navController = rememberNavController()
                 var showBottomBar by remember { mutableStateOf(true) }
+
                 Scaffold(
                     //contentWindowInsets = WindowInsets.navigationBars,
                     bottomBar = {
@@ -64,30 +68,34 @@ class MainActivity : ComponentActivity() {
                         modifier = Modifier.padding(innerPadding)
 
                     ) {
-
-
-                        NavHost(
-                            navController = navController,
-                            startDestination = Screen.MovieListScreen.route
-                        ) {
-                            composable(
-                                route = Screen.MovieListScreen.route
+                        SharedTransitionLayout {
+                            NavHost(
+                                navController = navController,
+                                startDestination = Screen.MovieListScreen.route
                             ) {
-                                MovieListScreen(navController)
-                                showBottomBar = true
-                            }
-                            composable(
-                                route = Screen.MovieDetailScreen.route + "/{${Constants.MOVIE_ID}}"
-                            ) {
+                                composable(
+                                    route = Screen.MovieListScreen.route
+                                ) {
+                                    MovieListScreen(
+                                        navController,
+                                        animatedVisibilityScope = this
+                                    )
+                                    showBottomBar = true
+                                }
+                                composable(
+                                    route = Screen.MovieDetailScreen.route + "/{${Constants.MOVIE_ID}}"
+                                ) {
 
-                                MovieDetailScreen(navController)
-                                showBottomBar = false
-                            }
-                            composable(
-                                route = Screen.WatchlistScreen.route
-                            ) {
-                                WatchlistScreen(navController)
-                                showBottomBar = true
+                                    MovieDetailScreen(navController, animatedVisibilityScope = this)
+                                    showBottomBar = false
+                                }
+                                composable(
+                                    route = Screen.WatchlistScreen.route
+                                ) {
+                                    WatchlistScreen(navController, animatedVisibilityScope = this)
+                                    showBottomBar = true
+                                }
+
                             }
                         }
 

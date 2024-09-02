@@ -10,8 +10,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.navigation.NavController
-import com.example.movieTracker.presentation.watchlist.components.BookmarkedButton
+import com.example.movieTracker.presentation.watchlist.components.BookmarkButton
 
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -21,33 +22,35 @@ fun TopBar(
     showBackButton: Boolean = true,
     collapseAppbar: Boolean = false,
     showBookmark: Boolean = false,
+    transparent: Boolean = false,
     movieId: Int = 0,
     navController: NavController?,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
+
+//    val state = rememberTopAppBarState()
+    //  val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(state)
     TopAppBar(
         //  modifier = Modifier.statusBarsPadding(),
         colors = TopAppBarDefaults.topAppBarColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer,
-            titleContentColor = MaterialTheme.colorScheme.primary,
-
-            ),
+            containerColor = if (transparent) Color.Transparent else MaterialTheme.colorScheme.primaryContainer,
+            titleContentColor = if (transparent) Color.White else MaterialTheme.colorScheme.primary,
+        ),
         title = {
             Text(title)
 
         },
         actions = {
             if (showBookmark)
-                BookmarkedButton(movieId = movieId)
+                BookmarkButton(movieId = movieId, isOnAppbar = true)
         },
 
-        scrollBehavior = if (collapseAppbar) null else scrollBehavior,
+        //  scrollBehavior = scrollBehavior,
         navigationIcon = {
             if (showBackButton) {
                 IconButton(onClick = {
                     navController?.popBackStack()
                 }) {
-                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "")
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, "", tint = Color.White)
                 }
             }
 

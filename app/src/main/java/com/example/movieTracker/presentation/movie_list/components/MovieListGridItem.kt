@@ -1,6 +1,10 @@
 package com.example.movieTracker.presentation.movie_list.components
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,10 +23,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.movieTracker.domain.model.Movie
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Composable
-fun MovieListGridItem(
+fun SharedTransitionScope.MovieListGridItem(
     movie: Movie,
-    onItemClick: (Movie) -> Unit
+    onItemClick: (Movie) -> Unit,
+    animatedVisibilityScope: AnimatedVisibilityScope
 ) {
 
     Column(
@@ -42,14 +48,34 @@ fun MovieListGridItem(
         ) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = "Movie Poster",
+                contentDescription = "",
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
                     .scale(1f)
                     .height(200.dp)
+                    .sharedElement(
+                        state = rememberSharedContentState(key = "poster/${movie.id}"),
+                        animatedVisibilityScope = animatedVisibilityScope,
+                        boundsTransform = { _, _ ->
+
+                            tween(durationMillis = 1000)
+                        }
+
+                    )
             )
         }
-        Text(text = movie.title, modifier = Modifier.padding(top = 8.dp))
+        Text(text = movie.title, modifier = Modifier
+            .padding(top = 8.dp)
+            .sharedElement(
+                state = rememberSharedContentState(key = "title/${movie.id}"),
+                animatedVisibilityScope = animatedVisibilityScope,
+                boundsTransform = { _, _ ->
+
+                    tween(durationMillis = 1000)
+                }
+
+            )
+        )
         //Text(text = movie.releaseDate, modifier = Modifier.padding(top = 4.dp))
         //HorizontalDivider()
     }
