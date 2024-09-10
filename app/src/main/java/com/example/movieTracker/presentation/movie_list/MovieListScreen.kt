@@ -50,6 +50,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -97,56 +98,22 @@ fun SharedTransitionScope.MovieListScreen(
 
     val threshold = 125
 
-
-    val isScrollingUp =
-        remember { derivedStateOf { lazyColumnState.firstVisibleItemScrollOffset < 0 } }
-    var previousIndex by remember { mutableStateOf(0) }
-    var previousScrollOffset by remember { mutableStateOf(0) }
-
-    /*
-    var isBoxVisible by remember { mutableStateOf(true) }
-    LaunchedEffect(lazyColumnState) {
-        snapshotFlow { lazyColumnState.firstVisibleItemIndex to lazyColumnState.firstVisibleItemScrollOffset }
-            .distinctUntilChanged()
-            .collect { (index, scrollOffset) ->
-                if (index != previousIndex) {
-                    isBoxVisible = index < previousIndex
-                } else {
-                    isBoxVisible = scrollOffset <= previousScrollOffset
-                }
-                previousIndex = index
-                previousScrollOffset = scrollOffset
-           }
-     */
-
+    var previousIndex by remember { mutableIntStateOf(0) }
+    var previousScrollOffset by remember { mutableIntStateOf(0) }
 
     val showSearchBar by remember {
         derivedStateOf {
-            val currentScrollOffset = if (!checkedState) {
-                lazyGridState.firstVisibleItemScrollOffset
-            } else {
-                lazyColumnState.firstVisibleItemScrollOffset
-            }
+            val (currentIndex, currentScrollOffset) =
+                lazyGridState.firstVisibleItemIndex to lazyGridState.firstVisibleItemScrollOffset
 
-            val currentIndex = if (!checkedState) {
-                lazyGridState.firstVisibleItemIndex
-            } else {
-                lazyColumnState.firstVisibleItemIndex
-            }
-
-            if (currentIndex != previousIndex) {
-                currentIndex < previousIndex
-            } else {
-                currentScrollOffset <= previousScrollOffset
-            }.also {
-                previousIndex = currentIndex
-                previousScrollOffset = currentScrollOffset
-            }
+            (currentIndex < previousIndex ||
+                    (currentIndex == previousIndex && currentScrollOffset <= previousScrollOffset)
+                    ).also {
+                    previousIndex = currentIndex
+                    previousScrollOffset = currentScrollOffset
+                }
         }
     }
-
-
-
 
     Scaffold(
         topBar = {

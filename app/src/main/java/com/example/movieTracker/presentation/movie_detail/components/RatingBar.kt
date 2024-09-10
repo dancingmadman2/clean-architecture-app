@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
-import com.example.movieTracker.ui.theme.DarkBlue
 
 @Composable
 fun RatingBar(
@@ -31,7 +30,7 @@ fun RatingBar(
                 Icon(
                     imageVector = Icons.Default.Star,
                     contentDescription = null,
-                    tint = DarkBlue,
+                    tint = Color.White,
                     modifier = Modifier
                         .size(24.dp)
                 )
@@ -73,7 +72,7 @@ private fun PartialStar(fraction: Float) {
             Icon(
                 imageVector = Icons.Default.Star,
                 contentDescription = null,
-                tint = DarkBlue,
+                tint = Color.White,
                 modifier = Modifier.size(24.dp)
             )
         }
